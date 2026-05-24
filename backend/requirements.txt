@@ -16,3 +16,16 @@ rank_bm25
 redis
 fastapi
 uvicorn
+python-dotenv
+pydantic
+python-docx
+tqdm
+python-jose[cryptography]
+psycopg2-binary
+python-multipart
+passlib
+email-validator
+cryptography
+dnspython
+cffi
+bcrypt
