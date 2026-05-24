@@ -11,8 +11,8 @@ export function formatBytes(bytes: number): string {
 }
 
 export function formatDate(value?: string | null): string {
-  if (!value) return 'Not processed';
-  return new Intl.DateTimeFormat('en', {
+  if (!value) return 'Chưa xử lý';
+  return new Intl.DateTimeFormat('vi', {
     year: 'numeric',
     month: 'short',
     day: '2-digit',
@@ -28,11 +28,18 @@ export function statusIcon(status: FileItem['status']): string {
   return 'upload_file';
 }
 
+const statusLabels: Record<FileItem['status'], string> = {
+  uploaded: 'Uploaded',
+  processing: 'Processing',
+  processed: 'Processed',
+  failed: 'Failed',
+};
+
 export function StatusPill({ status }: { status: FileItem['status'] }) {
   return (
     <span className={`status-pill status-${status}`}>
       <span className="material-symbols-outlined" aria-hidden="true">{statusIcon(status)}</span>
-      {status}
+      {statusLabels[status]}
     </span>
   );
 }

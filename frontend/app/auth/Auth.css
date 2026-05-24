@@ -124,3 +124,32 @@ body {
   color: #0056A6;
   text-decoration: none;
 }
+
+/* Back button */
+.auth-back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  text-decoration: none;
+  font-size: 16px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  transition: 0.2s;
+  z-index: 10;
+}
+
+.auth-back-button:hover {
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+}
+
+.auth-back-button .material-symbols-outlined {
+  font-size: 20px;
+  color: #ffffff;
+  margin-right: 0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}

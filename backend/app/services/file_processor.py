@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Optional
 from datetime import datetime, timezone
 
-from app.config import PROJECT_ROOT, config
+from app.config import PROJECT_ROOT, REPO_ROOT, config
 from app.utils.text_utils import split_text_into_chunks
 
 import docx
@@ -40,27 +40,35 @@ class FileProcessor:
         return f"{self.collection_name}_{self.timestamp}_{index}_{mtime_hex}_{content_hash[:16]}"
 
     def process_file(self, file_path: Path) -> tuple[list[str], list[str], list[dict]]:
+        text = self.extract_markdown_text(file_path)
+        return self.process_text(file_path, text)
+
+    def process_text(self, file_path: Path, text: str) -> tuple[list[str], list[str], list[dict]]:
+        return self._chunk_text(file_path, text)
+
+    def extract_markdown_text(self, file_path: Path) -> str:
         ext = file_path.suffix.lower()
         if ext == ".md":
-            return self._process_markdown(file_path)
+            return file_path.read_text(encoding="utf-8")
         elif ext == ".txt":
-            return self._process_text(file_path)
+            return file_path.read_text(encoding="utf-8")
         elif ext == ".pdf":
-            return self._process_pdf(file_path)
+            return self._extract_pdf_markdown(file_path)
         elif ext == ".docx":
-            return self._process_docx(file_path)
+            return self._extract_docx_text(file_path)
         else:
             raise ValueError(f"Unsupported file format: {ext}")
 
     def _process_markdown(self, file_path: Path) -> tuple[list[str], list[str], list[dict]]:
-        text = file_path.read_text(encoding="utf-8")
-        return self._chunk_text(file_path, text)
+        return self.process_text(file_path, self.extract_markdown_text(file_path))
 
     def _process_text(self, file_path: Path) -> tuple[list[str], list[str], list[dict]]:
-        text = file_path.read_text(encoding="utf-8")
-        return self._chunk_text(file_path, text)
+        return self.process_text(file_path, self.extract_markdown_text(file_path))
 
     def _process_pdf(self, file_path: Path) -> tuple[list[str], list[str], list[dict]]:
+        return self.process_text(file_path, self._extract_pdf_markdown(file_path))
+
+    def _extract_pdf_markdown(self, file_path: Path) -> str:
         pipeline_options = PdfPipelineOptions()
         if self.use_ocr:
             pipeline_options.do_ocr = True
@@ -75,13 +83,14 @@ class FileProcessor:
         )
 
         result = converter.convert(str(file_path))
-        text = result.document.export_to_markdown()
-        return self._chunk_text(file_path, text)
+        return result.document.export_to_markdown()
 
     def _process_docx(self, file_path: Path) -> tuple[list[str], list[str], list[dict]]:
+        return self.process_text(file_path, self._extract_docx_text(file_path))
+
+    def _extract_docx_text(self, file_path: Path) -> str:
         doc = docx.Document(file_path)
-        text = "\n".join([para.text for para in doc.paragraphs])
-        return self._chunk_text(file_path, text)
+        return "\n".join([para.text for para in doc.paragraphs])
 
     def _chunk_text(self, file_path: Path, text: str) -> tuple[list[str], list[str], list[dict]]:
         chunks = split_text_into_chunks(
@@ -96,7 +105,10 @@ class FileProcessor:
         try:
             relative_path = str(file_path.relative_to(PROJECT_ROOT))
         except ValueError:
-            relative_path = str(file_path.resolve().relative_to(PROJECT_ROOT.resolve()))
+            try:
+                relative_path = str(file_path.resolve().relative_to(REPO_ROOT.resolve()))
+            except ValueError:
+                relative_path = str(file_path.resolve())
 
         metadatas = [
             {"source": relative_path, "chunk_index": i, "file_name": file_path.name}

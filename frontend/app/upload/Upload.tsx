@@ -25,15 +25,12 @@ import {
 } from './components';
 import './Upload.css';
 
-type DashboardTab = 'files' | 'graph';
-
 const defaultChunkSize = 500;
 const defaultChunkOverlap = 50;
 
 export default function Upload() {
   const router = useRouter();
   const { logout } = useAuth();
-  const [activeTab, setActiveTab] = useState<DashboardTab>('files');
   const [files, setFiles] = useState<FileItem[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,7 +46,7 @@ export default function Upload() {
       setFiles(nextFiles);
       setSelectedIds(ids => ids.filter(id => nextFiles.some(file => file.id === id)));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unable to load files');
+      setError(err instanceof Error ? err.message : 'Không thể tải danh sách tệp');
     } finally {
       setLoading(false);
     }
@@ -83,7 +80,7 @@ export default function Upload() {
     });
 
     if (rejected.length) {
-      toast.error(`Unsupported file type: ${rejected.join(', ')}`);
+      toast.error(`Định dạng tệp không được hỗ trợ: ${rejected.join(', ')}`);
     }
 
     if (!valid.length) return;
@@ -91,10 +88,10 @@ export default function Upload() {
     setUploading(true);
     try {
       await uploadFiles(valid);
-      toast.success('Files uploaded successfully');
+      toast.success('Tải lên tệp thành công');
       await refreshFiles();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Upload failed');
+      toast.error(err instanceof Error ? err.message : 'Tải lên thất bại');
     } finally {
       setUploading(false);
     }
@@ -102,8 +99,8 @@ export default function Upload() {
 
   const confirmDelete = async (ids: string[]) => {
     if (!ids.length) return;
-    const label = ids.length === 1 ? 'this file' : `${ids.length} files`;
-    if (!window.confirm(`Delete ${label}? This action cannot be undone.`)) return;
+    const label = ids.length === 1 ? 'tệp này' : `${ids.length} tệp`;
+    if (!window.confirm(`Xóa ${label}? Hành động này không thể hoàn tác.`)) return;
 
     try {
       if (ids.length === 1) {
@@ -111,11 +108,11 @@ export default function Upload() {
       } else {
         await deleteFiles(ids);
       }
-      toast.success('Deleted successfully');
+      toast.success('Xóa thành công');
       setSelectedIds(current => current.filter(id => !ids.includes(id)));
       await refreshFiles();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Delete failed');
+      toast.error(err instanceof Error ? err.message : 'Xóa thất bại');
     }
   };
 
@@ -137,10 +134,10 @@ export default function Upload() {
     setProcessing(true);
     try {
       await startProcessing(payload);
-      toast.success('Processed with Vector and BM25');
+      toast.success('Xử lý Thành công');
       await refreshFiles();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Processing failed');
+      toast.error(err instanceof Error ? err.message : 'Xử lý thất bại');
       await refreshFiles();
     } finally {
       setProcessing(false);
@@ -154,66 +151,31 @@ export default function Upload() {
           <Image src="/assets/logo.png" alt="" width={120} height={40} />
           <span>REBot</span>
         </Link>
-        <button className="dashboard-ghost-button" type="button" onClick={handleLogout} aria-label="Log out">
+        <button className="dashboard-ghost-button" type="button" onClick={handleLogout} aria-label="Đăng xuất">
           <span className="material-symbols-outlined" aria-hidden="true">logout</span>
         </button>
       </header>
 
       <div className="dashboard-shell">
-        <DashboardSidebar activeTab={activeTab} onChange={setActiveTab} />
-
         <main className="dashboard-panel">
-          {activeTab === 'files' ? (
-            <FilesTab
-              files={files}
-              loading={loading}
-              error={error}
-              uploading={uploading}
-              processing={processing}
-              selectedIds={selectedIds}
-              onSelect={setSelectedIds}
-              onUpload={uploadCandidateFiles}
-              onRefresh={refreshFiles}
-              onDelete={confirmDelete}
-              onProcess={runProcessing}
-            />
-          ) : null}
-
-          {activeTab === 'graph' ? <KnowledgeGraphTab /> : null}
+          <FilesTab
+            files={files}
+            loading={loading}
+            error={error}
+            uploading={uploading}
+            processing={processing}
+            selectedIds={selectedIds}
+            onSelect={setSelectedIds}
+            onUpload={uploadCandidateFiles}
+            onRefresh={refreshFiles}
+            onDelete={confirmDelete}
+            onProcess={runProcessing}
+          />
         </main>
       </div>
 
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
-  );
-}
-
-function DashboardSidebar({
-  activeTab,
-  onChange,
-}: {
-  activeTab: DashboardTab;
-  onChange: (tab: DashboardTab) => void;
-}) {
-  const tabs: { id: DashboardTab; label: string; icon: string }[] = [
-    { id: 'files', label: 'Files', icon: 'folder_open' },
-    { id: 'graph', label: 'Knowledge Graph', icon: 'account_tree' },
-  ];
-
-  return (
-    <aside className="dashboard-sidebar" aria-label="Dashboard sections">
-      {tabs.map(tab => (
-        <button
-          key={tab.id}
-          className={`sidebar-tab ${activeTab === tab.id ? 'active' : ''}`}
-          type="button"
-          onClick={() => onChange(tab.id)}
-        >
-          <span className="material-symbols-outlined" aria-hidden="true">{tab.icon}</span>
-          <span>{tab.label}</span>
-        </button>
-      ))}
-    </aside>
   );
 }
 
@@ -235,6 +197,10 @@ function FilesTab(props: {
   const allSelected = props.files.length > 0 && props.selectedIds.length === props.files.length;
   const selectedFiles = props.files.filter(file => props.selectedIds.includes(file.id));
 
+  const openKnowledgeGraph = () => {
+    window.open(`${graphUrl}?v=${Date.now()}`, '_blank', 'noopener,noreferrer');
+  };
+
   const handleDrop = (event: DragEvent<HTMLLabelElement>) => {
     event.preventDefault();
     setDragging(false);
@@ -249,13 +215,19 @@ function FilesTab(props: {
   return (
     <section className="dashboard-section">
       <SectionHeader
-        title="Files"
-        subtitle="Upload source files and process them with the default RAG pipeline."
+        title="Tệp"
+        subtitle="Tải lên các tệp nguồn và xử lý chúng bằng đường ống RAG mặc định."
         action={
-          <button className="dashboard-ghost-button" type="button" onClick={props.onRefresh}>
-            <span className="material-symbols-outlined" aria-hidden="true">refresh</span>
-            Refresh
-          </button>
+          <div className="header-actions">
+            <button className="dashboard-ghost-button" type="button" onClick={openKnowledgeGraph}>
+              <span className="material-symbols-outlined" aria-hidden="true">account_tree</span>
+              Đồ thị tri thức
+            </button>
+            <button className="dashboard-ghost-button" type="button" onClick={props.onRefresh}>
+              <span className="material-symbols-outlined" aria-hidden="true">refresh</span>
+              Làm mới
+            </button>
+          </div>
         }
       />
 
@@ -277,26 +249,26 @@ function FilesTab(props: {
           hidden
         />
         <span className="material-symbols-outlined plus-icon" aria-hidden="true">upload_file</span>
-        <strong>{props.uploading ? 'Uploading files...' : 'Drag files here or choose from your computer'}</strong>
-        <small>Accepted: DOCX, PDF, TXT, Markdown</small>
+        <strong>{props.uploading ? 'Đang tải lên tệp...' : 'Kéo tệp vào đây hoặc chọn từ máy tính'}</strong>
+        <small>Chấp nhận: DOCX, PDF, TXT, Markdown</small>
       </label>
 
       {props.error ? <div className="dashboard-alert">{props.error}</div> : null}
 
       <div className="table-toolbar">
-        <div>{props.selectedIds.length} selected</div>
+        <div>{props.selectedIds.length} đã chọn</div>
         <div className="toolbar-actions">
           <button
             className="dashboard-primary-button"
             type="button"
             disabled={!selectedFiles.length || props.processing}
             onClick={() => props.onProcess(selectedFiles)}
-            title="Process with Vector and BM25, chunk size 500, overlap 50"
+            title="Xử lý với Vector và BM25, kích thước chunk 500, độ chồng lấn 50"
           >
             <span className="material-symbols-outlined" aria-hidden="true">
               {props.processing ? 'progress_activity' : 'play_arrow'}
             </span>
-            {props.processing ? 'Processing...' : 'Process selected'}
+            {props.processing ? 'Đang xử lý...' : 'Xử lý đã chọn'}
           </button>
           <button
             className="dashboard-danger-button"
@@ -305,7 +277,7 @@ function FilesTab(props: {
             onClick={() => props.onDelete(props.selectedIds)}
           >
             <span className="material-symbols-outlined" aria-hidden="true">delete</span>
-            Delete selected
+            Xóa đã chọn
           </button>
         </div>
       </div>
@@ -313,14 +285,8 @@ function FilesTab(props: {
       {props.loading ? <LoadingState /> : null}
       {!props.loading && props.files.length === 0 ? (
         <EmptyState
-          title="No source files yet"
-          description="Add documents, then process them with Vector and BM25."
-          action={
-            <button className="dashboard-primary-button" type="button" onClick={() => fileInputRef.current?.click()}>
-              <span className="material-symbols-outlined" aria-hidden="true">add</span>
-              Add files
-            </button>
-          }
+          title="Chưa có tệp nguồn"
+          description="Thêm tài liệu, sau đó xử lý chúng bằng Vector và BM25."
         />
       ) : null}
 
@@ -331,19 +297,19 @@ function FilesTab(props: {
               <tr>
                 <th>
                   <input
-                    aria-label="Select all files"
+                    aria-label="Chọn tất cả tệp"
                     type="checkbox"
                     checked={allSelected}
                     onChange={event => props.onSelect(event.target.checked ? props.files.map(file => file.id) : [])}
                   />
                 </th>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Size</th>
-                <th>Status</th>
-                <th>Uploaded</th>
-                <th>Last processed</th>
-                <th>Actions</th>
+                <th>Tên</th>
+                <th>Loại</th>
+                <th>Kích thước</th>
+                <th>Trạng thái</th>
+                <th>Đã tải lên</th>
+                <th>Xử lý lần cuối</th>
+                <th>Hành động</th>
               </tr>
             </thead>
             <tbody>
@@ -378,11 +344,11 @@ function FilesTab(props: {
                       type="button"
                       disabled={props.processing || file.status === 'processing'}
                       onClick={() => props.onProcess([file])}
-                      title="Process with Vector and BM25, chunk size 500, overlap 50"
+                      title="Xử lý với Vector và BM25, kích thước chunk 500, độ chồng lấn 50"
                     >
                       <span className="material-symbols-outlined" aria-hidden="true">play_arrow</span>
                     </button>
-                    <button className="icon-button danger" type="button" title="Delete file" onClick={() => props.onDelete([file.id])}>
+                    <button className="icon-button danger" type="button" title="Xóa tệp" onClick={() => props.onDelete([file.id])}>
                       <span className="material-symbols-outlined" aria-hidden="true">delete</span>
                     </button>
                   </td>
@@ -392,83 +358,6 @@ function FilesTab(props: {
           </table>
         </div>
       ) : null}
-    </section>
-  );
-}
-
-function KnowledgeGraphTab() {
-  const [reloadKey, setReloadKey] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [failed, setFailed] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-    setLoading(true);
-    setFailed(false);
-    fetch(graphUrl, { method: 'HEAD' })
-      .then(response => {
-        if (!active) return;
-        setFailed(!response.ok);
-      })
-      .catch(() => {
-        if (active) setFailed(true);
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-    return () => {
-      active = false;
-    };
-  }, [reloadKey]);
-
-  return (
-    <section className="dashboard-section">
-      <SectionHeader
-        title="Knowledge Graph"
-        subtitle="View the generated academic regulation knowledge graph."
-        action={
-          <div className="header-actions">
-            <button
-              className="dashboard-ghost-button"
-              type="button"
-              onClick={() => {
-                setFailed(false);
-                setLoading(true);
-                setReloadKey(key => key + 1);
-              }}
-            >
-              <span className="material-symbols-outlined" aria-hidden="true">refresh</span>
-              Refresh
-            </button>
-            <a className="dashboard-ghost-button" href={graphUrl} target="_blank" rel="noreferrer">
-              <span className="material-symbols-outlined" aria-hidden="true">open_in_new</span>
-              Open
-            </a>
-          </div>
-        }
-      />
-
-      <div className="graph-viewer">
-        {loading ? <div className="graph-overlay"><LoadingState /></div> : null}
-        {failed ? (
-          <EmptyState
-            title="Graph unavailable"
-            description="The backend could not load backend/data/graphify-out/academic_regulation.graph.html."
-          />
-        ) : (
-          <iframe
-            key={reloadKey}
-            title="Academic regulation knowledge graph"
-            src={`${graphUrl}?v=${reloadKey}`}
-            sandbox="allow-scripts allow-same-origin"
-            onLoad={() => setLoading(false)}
-            onError={() => {
-              setLoading(false);
-              setFailed(true);
-            }}
-          />
-        )}
-      </div>
     </section>
   );
 }
