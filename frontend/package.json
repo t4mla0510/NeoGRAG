@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "typescript": "^5.8.2",
     "@ai-sdk/openai-compatible": "^2.0.47",
     "@ai-sdk/react": "^3.0.192",
     "@srexi/purecounterjs": "^1.5.0",
