@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../firebase.config";
 import "./Auth.css";
 import { assets } from "../components/assets";
 import { useAuth } from "../components/AuthContext";
@@ -14,6 +13,7 @@ export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
@@ -22,33 +22,31 @@ export default function Auth() {
     }
   }, [isAuthenticated, router]);
 
-  if (loading) {
-    return null;
-  }
-
-  if (isAuthenticated) {
+  if (loading || isAuthenticated) {
     return null;
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSubmitting(true);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      login();
+      await login(email, password);
       router.replace("/upload");
     } catch (err) {
       console.error("Login error: ", err);
-      setError("Email hoặc mật khẩu không đúng!");
+      setError("Email hoặc mật khẩu đăng nhập không đúng!");
       setTimeout(() => setError(""), 3000);
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
     <div className="auth-container">
       <div className="auth-box">
-        <img src={assets.ctu} alt="Logo" className="auth-logo" />
+        <Image src={assets.ctu} alt="Logo" className="auth-logo" width={330} height={120} priority />
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="auth-input-group">
@@ -59,6 +57,7 @@ export default function Auth() {
               className="auth-input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
 
@@ -70,14 +69,16 @@ export default function Auth() {
               className="auth-input"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
-            <span
-              className="material-symbols-outlined"
+            <button
+              type="button"
+              className="material-symbols-outlined auth-visibility-button"
               onClick={() => setShowPassword(!showPassword)}
-              style={{ cursor: "pointer" }}
+              aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? "visibility_off" : "visibility"}
-            </span>
+            </button>
           </div>
 
           {error && (
@@ -87,11 +88,11 @@ export default function Auth() {
           )}
 
           <div className="auth-options">
-            <a href="#">Quên mật khẩu?</a>
+            <a href="#">Quên Mật Khẩu?</a>
           </div>
 
-          <button type="submit" className="auth-button">
-            Đăng nhập
+          <button type="submit" className="auth-button" disabled={submitting}>
+            {submitting ? "Đăng nhập..." : "Đăng nhập"}
           </button>
         </form>
       </div>

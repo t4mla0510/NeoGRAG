@@ -71,6 +71,14 @@ body {
   color: #0056A6;
 }
 
+.auth-visibility-button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  margin-right: 0;
+  padding: 0;
+}
+
 .auth-input {
   border: none;
   outline: none;
@@ -97,6 +105,11 @@ body {
 
 .auth-button:hover {
   background: #004080;
+}
+
+.auth-button:disabled {
+  background: #8aa9cb;
+  cursor: not-allowed;
 }
 
 /* Quên mật khẩu */
