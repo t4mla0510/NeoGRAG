@@ -1,0 +1,69 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+build/
+dist/
+wheels/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+env/
+
+# Node and Next.js
+node_modules/
+.next/
+out/
+dist/
+coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+tsconfig.tsbuildinfo
+
+# Runtime data and generated stores
+cache/
+chroma_data/
+data/
+hf_cache/
+.cache/
+*.sqlite
+*.sqlite3
+*.db
+*.pkl
+*.pickle
+*.parquet
+*.feather
+
+# Model and checkpoint artifacts
+*.bin
+*.pt
+*.pth
+*.onnx
+*.safetensors
+*.ckpt
+*.gguf
+
+# Logs and OS/editor files
+logs/
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.gitnexus/

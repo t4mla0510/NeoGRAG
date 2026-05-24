@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=K2D:wght@400;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'K2D', sans-serif;
+  background: #f5f7fb;
+}
+
+/* Container */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: url("/assets/auth_bg.png") no-repeat center center/cover;
+  position: relative;
+}
+
+/* .auth-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 86, 166, 0.25);
+  z-index: 1;
+} */
+
+/* Box */
+.auth-box {
+  background: white;
+  z-index: 2;
+  padding: 50px 60px;
+  width: 580px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+}
+
+.auth-logo {
+  width: 330px;
+  margin-bottom: 5px;
+  margin-top: -10px;
+}
+
+/* Form */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.auth-input-group {
+  display: flex;
+  align-items: center;
+  border-bottom: 1.5px solid #ccc;
+  margin-bottom: 25px;
+  padding: 10px 0;
+  position: relative;
+}
+
+.material-symbols-outlined {
+  font-size: 25px;
+  margin-right: 12px;
+  color: #0056A6;
+}
+
+.auth-input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 16px;
+  background: transparent;
+  color: #333;
+}
+
+/* Nút */
+.auth-button {
+  background: #0056A6;
+  color: white;
+  padding: 22px;
+  border: none;
+  border-radius: 8px;
+  font-size: 17px;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 100%;
+  transition: 0.2s;
+  overflow: hidden;
+}
+
+.auth-button:hover {
+  background: #004080;
+}
+
+/* Quên mật khẩu */
+.auth-options {
+  display: flex;
+  justify-content: flex-end;
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+.auth-options a {
+  color: #0056A6;
+  text-decoration: none;
+}

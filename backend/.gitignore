@@ -1,0 +1,28 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Data folder
+/data
+
+# Environment config
+.env
+
+# Documentations
+*.md
+!README.md
+
+# Workspace settings
+.vscode
+.gitnexus
+
+# Vector embedding and BM25 cache
+/cache
+/chroma_data

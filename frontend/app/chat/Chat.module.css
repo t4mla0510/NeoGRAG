@@ -1,0 +1,455 @@
+.window-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background-color: var(--background-color, #f4f7fb);
+  font-family: 'Readex Pro', sans-serif;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  background: var(--background-color, #f4f7fb);
+  min-height: 0;
+}
+
+.nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #1f5ca9, #00afef);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.nav-logo:hover {
+  transform: scale(1.02);
+}
+
+.nav-logo img {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.nav-logo p {
+  font-size: 28px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: 1px;
+  font-family: 'K2D', sans-serif;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.main-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding-top: 70px;
+  position: relative;
+  min-height: 0;
+}
+
+.chats-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 30px 20px 120px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  scroll-behavior: smooth;
+  min-height: 0;
+}
+
+.chats-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chats-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chats-container::-webkit-scrollbar-thumb {
+  background-color: rgba(31, 92, 169, 0.2);
+  border-radius: 10px;
+}
+
+.chats-container::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(31, 92, 169, 0.5);
+}
+
+.message {
+  display: flex;
+  width: 100%;
+  animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bot-message {
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.bot-message .avatar {
+  height: 40px;
+  width: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #00afef;
+  padding: 4px;
+  box-shadow: 0 2px 8px rgba(0, 175, 239, 0.2);
+}
+
+.bot-message.loading .avatar {
+  animation: pulseAvatar 1.5s infinite;
+}
+
+@keyframes pulseAvatar {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 175, 239, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(0, 175, 239, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 175, 239, 0);
+  }
+}
+
+.bot-message .message-text {
+  background-color: var(--message-bg-bot, #ffffff);
+  color: var(--text-color, #333333);
+  padding: 14px 20px;
+  border-radius: 4px 20px 20px 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 80%;
+  border: 1px solid rgba(0, 175, 239, 0.1);
+}
+
+.user-message {
+  justify-content: flex-end;
+}
+
+.user-message .message-text {
+  background: linear-gradient(135deg, #1f5ca9, #00afef);
+  color: #ffffff;
+  padding: 14px 20px;
+  border-radius: 20px 4px 20px 20px;
+  box-shadow: 0 4px 15px rgba(31, 92, 169, 0.3);
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 75%;
+}
+
+.message-text p {
+  margin: 0 0 10px 0;
+}
+
+.message-text p:last-child {
+  margin-bottom: 0;
+}
+
+.message-text table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 12px 0;
+  font-size: 14px;
+}
+
+.message-text th,
+.message-text td {
+  border: 1px solid rgba(0, 175, 239, 0.2);
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.message-text th {
+  background: rgba(0, 175, 239, 0.1);
+  font-weight: 600;
+}
+
+.message-text tr:nth-child(even) {
+  background: rgba(0, 175, 239, 0.05);
+}
+
+.message-text code {
+  background: rgba(0, 0, 0, 0.06);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Fira Code', monospace;
+  font-size: 13px;
+}
+
+.message-text pre {
+  background: rgba(0, 0, 0, 0.06);
+  padding: 12px 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 12px 0;
+}
+
+.message-text pre code {
+  background: none;
+  padding: 0;
+}
+
+.message-text ul,
+.message-text ol {
+  margin: 8px 0;
+  padding-left: 24px;
+}
+
+.message-text li {
+  margin: 4px 0;
+}
+
+.message-text a {
+  color: #00afef;
+  text-decoration: underline;
+}
+
+.message-text h1 {
+  font-size: 19px;
+  font-weight: 600;
+  margin: 16px 0 12px 0;
+}
+
+.message-text h2 {
+  font-size: 17px;
+  font-weight: 600;
+  margin: 14px 0 10px 0;
+}
+
+.message-text h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 12px 0 8px 0;
+}
+
+.message-text h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 10px 0 6px 0;
+}
+
+.prompt-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, var(--background-color, #f4f7fb) 60%, transparent);
+  padding: 20px 0 15px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 100;
+  transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.prompt-container.centered {
+  bottom: 50%;
+  transform: translateY(50%);
+  background: transparent;
+}
+
+.prompt-container.at-bottom {
+  bottom: 0;
+  transform: translateY(0);
+}
+
+.prompt-wrapper {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  max-width: 800px;
+  padding: 0 20px;
+  align-items: center;
+}
+
+.prompt-search {
+  flex: 1;
+  display: flex;
+  background: var(--input-bg, #ffffff);
+  border-radius: 30px;
+  padding: 8px 12px 8px 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(31, 92, 169, 0.1);
+  align-items: center;
+  transition: box-shadow 0.3s ease;
+}
+
+.prompt-search:focus-within {
+  box-shadow: 0 6px 25px rgba(0, 175, 239, 0.2);
+  border: 1px solid rgba(0, 175, 239, 0.4);
+}
+
+.prompt-input {
+  flex: 1;
+  background: transparent;
+  outline: none;
+  border: none;
+  font-size: 16px;
+  color: var(--text-color, #333333);
+  font-family: 'Readex Pro', sans-serif;
+  resize: none;
+  overflow-y: auto;
+  max-height: 150px;
+  min-height: 24px;
+  line-height: 24px;
+  padding: 9px 0;
+  box-sizing: content-box;
+}
+
+.prompt-input::-webkit-scrollbar {
+  width: 4px;
+}
+
+.prompt-input::-webkit-scrollbar-thumb {
+  background-color: rgba(31, 92, 169, 0.2);
+  border-radius: 4px;
+}
+
+.prompt-input::placeholder {
+  color: #999;
+}
+
+.prompt-actions {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 42px;
+  height: 42px;
+}
+
+.prompt-input:valid ~ .prompt-actions {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: all;
+}
+
+.prompt-input:valid ~ .prompt-actions {
+  opacity: 0;
+  transform: scale(0.8);
+  pointer-events: none;
+}
+
+@keyframes pulseMic {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 71, 87, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 71, 87, 0);
+  }
+}
+
+.side-btn {
+  background: var(--button-bg-secondary, #ffffff);
+  color: #1f5ca9;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid rgba(31, 92, 169, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.side-btn:hover {
+  background: #f0f7ff;
+  color: #00afef;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+}
+
+.bottom-info {
+  margin-top: 15px;
+  color: var(--text-muted, #777);
+  font-size: 12px;
+  font-family: 'K2D', sans-serif;
+  text-align: center;
+  opacity: 0.8;
+}
+
+.typing-indicator {
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+  align-items: center;
+}
+
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #00afef;
+  display: inline-block;
+  animation: typingBounce 1.4s infinite ease-in-out both;
+}
+
+.typing-indicator span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0s;
+}
+
+@keyframes typingBounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

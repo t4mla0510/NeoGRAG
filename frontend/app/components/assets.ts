@@ -1,0 +1,15 @@
+export const assets = {
+    auth_bg: '/assets/auth_bg.png',
+    bot_avatar: '/assets/bot_avatar.png',
+    ctu: '/assets/ctu.png',
+    delete_icon: '/assets/delete_icon.png',
+    logo_icon: '/assets/logo_icon.png',
+    logo: '/assets/logo.png',
+    heroBg: '/assets/hero-bg.jpg',
+    ctaBg: '/assets/cta-bg.jpg',
+    featuresBg: '/assets/features-bg.jpg',
+    statsBg: '/assets/stats-bg.jpg',
+    faq: '/assets/faq.jpg',
+    appleTouchIcon: '/assets/apple-touch-icon.png',
+    rebotAnimation: '/assets/rebot-animation.json',
+}

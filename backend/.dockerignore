@@ -1,0 +1,70 @@
+# Git and local tooling
+.git/
+.gitignore
+.dockerignore
+.vscode/
+.idea/
+.gitnexus/
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+
+# Python build/test artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+build/
+dist/
+wheels/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments and package caches
+.venv/
+venv/
+env/
+.uv/
+pip-wheel-metadata/
+
+# Runtime caches, vector stores, and generated data
+cache/
+chroma_data/
+data/
+hf_cache/
+.cache/
+*.sqlite
+*.sqlite3
+*.db
+*.pkl
+*.pickle
+*.parquet
+*.feather
+
+# Model/checkpoint artifacts
+*.bin
+*.pt
+*.pth
+*.onnx
+*.safetensors
+*.ckpt
+*.gguf
+
+# Logs and OS noise
+*.log
+.DS_Store
+Thumbs.db
+
+# Project files not needed by the runtime image
+README.md
+uv.lock
+pyproject.toml
+docker-compose.yml

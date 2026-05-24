@@ -1,0 +1,163 @@
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  display: inline-block;
+  vertical-align: middle;
+  overflow: hidden;
+  line-height: 1;  
+}
+
+.upload-page {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: linear-gradient(120deg, #004080, #0056A6, #007BFF);
+  font-family: "K2D", sans-serif;
+  overflow: hidden;
+}
+
+ .btn-logout {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: auto;
+  padding: 12px;
+  background: white; 
+  color: #0056A6;
+  border: none;
+  border-radius: 10px; 
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.upload-container {
+  max-width: 600px;
+  margin: 50px auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  font-family: "K2D", sans-serif;
+}
+
+.upload-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #0056A6;
+}
+
+.upload-dropzone {
+  display: block;
+  border: 2px dashed #0056A6;
+  border-radius: 12px;
+  padding: 50px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #f9fbff;
+}
+
+.upload-dropzone:hover {
+  background: #eaf2ff; 
+}
+
+
+.dropzone-content {
+  color: #004080;
+}
+
+.plus-icon {
+  font-size: 36px;
+  display: block;
+  margin-bottom: 8px;
+  color: #0056A6;
+}
+
+.file-list {
+  margin-top: 20px;
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #d6e4f5;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 6px rgba(0, 86, 166, 0.08);
+  transition: 0.2s;
+}
+
+.file-item:hover {
+  background: #eaf2ff;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-icon {
+  font-size: 24px;
+}
+
+.file-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.file-size {
+  font-size: 13px;
+  color: #666;
+}
+
+.file-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-icon {
+  position: relative;
+  background: #0056A6;
+  border: none;
+  border-radius: 6px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.btn-icon .material-symbols-outlined {
+  font-size: 22px;
+  color: #fff;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.btn-upload {
+  margin-top: 25px;
+  width: 100%;
+  /* background: linear-gradient(to right, #0056A6, #0077cc); */
+  background: #0056A6;
+  color: white;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap
+}
+
+.btn-upload:disabled {
+  background: #a0a0a0;
+  cursor: not-allowed;
+}

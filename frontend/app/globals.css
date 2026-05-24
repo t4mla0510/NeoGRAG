@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  /* font-family: 'Be Vietnam Pro'; */
+}
+
+body {
+  overflow-x: hidden;
+}
+
+html, body {
+  min-height: 100vh;
+}
+
+:root {
+  --background-color: #ffffff;
+  --text-color: #000000;
+  --primary-color: #1f5ca9;
+  --nav-bg: #ffffff;
+  --message-bg-user: #f0f4f9;
+  --message-bg-bot: #f0f4f9;
+  --input-bg: #f0f4f9;
+  --button-bg: #1d7efd;
+  --button-bg-secondary: #f0f4f9;
+  --button-text: #ffffff;
+  --border-color: #dfe4ea;
+  --scrollbar-thumb: #888;
+  --text-muted: #a8adb4;
+  --sidebar-bg: #1f5ca9;
+  --new-chat-bg-start: #e3fbff;
+  --new-chat-bg-end: #d9e7ff;
+  --new-chat-bg-start-hover: #c5ecf2;
+  --new-chat-bg-end-hover: #bdcfed;
+  --new-chat-text: #000000;
+  --recent-entry-hover: #6e8ec0;
+  --sidebar-collapsed-bg: #ffffff;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+[data-theme='dark'] {
+  --background-color: #212121;
+  --text-color: #ffffff;
+  --primary-color: #66b0ff;
+  --nav-bg: #212121;
+  --message-bg-user: #303030;
+  --message-bg-bot: #303030;
+  --input-bg: #303030;
+  --button-bg: #66b0ff;
+  --button-bg-secondary: #303030;
+  --button-text: #ffffff;
+  --border-color: #555555;
+  --scrollbar-thumb: #aaaaaa;
+  --text-muted: #cccccc;
+  --sidebar-bg: #181818;
+  --new-chat-bg-start: #333333;
+  --new-chat-bg-end: #444444;
+  --new-chat-bg-start-hover: #303030;
+  --new-chat-bg-end-hover: #555555;
+  --new-chat-text: #ffffff;
+  --recent-entry-hover: #333333;
+  --sidebar-collapsed-bg: #212121;
+}
