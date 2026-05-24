@@ -3,11 +3,13 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-# Project root directory
+# Backend root directory
 PROJECT_ROOT = Path(__file__).parent.parent
+REPO_ROOT = PROJECT_ROOT.parent
 
-project_root_env = PROJECT_ROOT / ".env"
-load_dotenv(project_root_env if project_root_env.exists() else None, override=True)
+backend_env = PROJECT_ROOT / ".env"
+repo_env = REPO_ROOT / ".env"
+load_dotenv(backend_env if backend_env.exists() else repo_env if repo_env.exists() else None, override=True)
 
 
 class Config:
@@ -24,6 +26,16 @@ class Config:
     REDIS_PORT: int = int(os.environ.get("REDIS_PORT", "6379"))
     REDIS_TTL: int = int(os.environ.get("REDIS_TTL", "3600"))
 
+    POSTGRES_HOST: str = os.environ.get("POSTGRES_HOST", "localhost")
+    POSTGRES_PORT: int = int(os.environ.get("POSTGRES_PORT", "5432"))
+    POSTGRES_USER: str = os.environ.get("POSTGRES_USER", "admin")
+    POSTGRES_PASSWORD: str = os.environ.get("POSTGRES_PASSWORD", "admin")
+    POSTGRES_DB: str = os.environ.get("POSTGRES_DB", "neograg")
+
+    JWT_SECRET: str = os.environ.get("JWT_SECRET", "supersecretkey")
+    JWT_ALGORITHM: str = "HS256"
+    JWT_EXPIRE_MINUTES: int = int(os.environ.get("JWT_EXPIRE_MINUTES", "1440"))
+
     CHROMA_HNSW_SPACE: str = os.environ.get("CHROMA_HNSW_SPACE", "cosine")
     CHROMA_EF_CONSTRUCTION: int = int(os.environ.get("CHROMA_EF_CONSTRUCTION", "200"))
     CHROMA_EF_SEARCH: int = int(os.environ.get("CHROMA_EF_SEARCH", "100"))
@@ -32,7 +44,8 @@ class Config:
     DEFAULT_CHUNK_SIZE: int = 500
     DEFAULT_CHUNK_OVERLAP: int = 50
 
-    DATA_DIR: Path = PROJECT_ROOT / "data"
+    DATA_DIR: Path = Path(os.environ.get("DATA_DIR", PROJECT_ROOT / "data")).resolve()
+    TMP_UPLOAD_DIR: Path = DATA_DIR / "tmp"
 
     BM25_CACHE_DIR: Path = PROJECT_ROOT / "cache"
     BM25_SKIP_COLLECTIONS: list[str] = ["faq"]

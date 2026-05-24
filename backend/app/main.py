@@ -22,6 +22,8 @@ from app.services.keyword_search import KeywordSearch
 from app.services.ned import NEDService
 from app.services.semantic_search import SemanticSearch
 from app.utils.bm25_indexer import BM25Indexer
+from app.routers import files, knowledge_graph, process
+from app.routers.auth import router as auth_router
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -57,6 +59,11 @@ ned_service = NEDService.get_instance()
 graphrag_service = GraphRAGService.get_instance()
 semantic_search = SemanticSearch.get_instance()
 keyword_search = KeywordSearch.get_instance()
+
+app.include_router(files.router, prefix="/api", tags=["files"])
+app.include_router(process.router, prefix="/api", tags=["process"])
+app.include_router(knowledge_graph.router, prefix="/api", tags=["knowledge-graph"])
+app.include_router(auth_router, prefix="/api", tags=["auth"])
 
 
 @app.post("/search/vector")

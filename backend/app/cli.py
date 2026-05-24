@@ -30,6 +30,21 @@ def cmd_build_bm25(args: argparse.Namespace) -> None:
         sys.exit(1)
 
 
+def cmd_create_admin(args: argparse.Namespace) -> None:
+    """Create an admin user."""
+    from app.services.auth import create_admin
+
+    try:
+        admin = create_admin(args.email, args.password, args.username)
+        print(f"\nAdmin user created successfully:")
+        print(f"  ID: {admin['id']}")
+        print(f"  Email: {admin['email']}")
+        print(f"  Username: {admin['username']}")
+    except Exception as e:
+        logger.error(f"Failed to create admin: {e}")
+        sys.exit(1)
+
+
 def parse_headers(headers_str: str) -> list[tuple[str, str]]:
     """Parse header string like '#:H1,##:H2,###:H3' into list of tuples."""
 
@@ -352,6 +367,27 @@ def main() -> None:
         help="Suppress progress output.",
     )
     build_bm25_parser.set_defaults(func=cmd_build_bm25)
+
+    create_admin_parser = subparsers.add_parser(
+        "create-admin",
+        help="Create an admin user",
+    )
+    create_admin_parser.add_argument(
+        "--email",
+        required=True,
+        help="Admin email address",
+    )
+    create_admin_parser.add_argument(
+        "--password",
+        required=True,
+        help="Admin password",
+    )
+    create_admin_parser.add_argument(
+        "--username",
+        required=True,
+        help="Admin username",
+    )
+    create_admin_parser.set_defaults(func=cmd_create_admin)
 
     build_vector_parser = subparsers.add_parser(
         "build-vector", help="Build vector store from markdown files"

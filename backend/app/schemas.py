@@ -1,5 +1,29 @@
 from dataclasses import dataclass
 
+from pydantic import BaseModel
+
+
+class AdminRegister(BaseModel):
+    email: str
+    password: str
+    username: str
+
+
+class AdminLogin(BaseModel):
+    email: str
+    password: str
+
+
+class AdminResponse(BaseModel):
+    id: int
+    email: str
+    username: str
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
 
 @dataclass
 class SearchRequest:

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Header, HTTPException
 
 from app.schemas import AdminLogin, AdminRegister, AdminResponse, TokenResponse
 from app.services.auth import (
@@ -41,7 +41,7 @@ async def login(credentials: AdminLogin):
 
 
 @router.get("/auth/me", response_model=AdminResponse)
-async def get_me(authorization: str = None):
+async def get_me(authorization: str = Header(default=None)):
     admin = get_current_admin(authorization)
     if not admin:
         raise HTTPException(status_code=401, detail="Not authenticated")
