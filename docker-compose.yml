@@ -42,8 +42,7 @@ services:
       - hf_cache:/hf_cache
       - ./backend/cache:/app/cache
       - ./backend/chroma_data:/app/chroma_data
-      - ./backend/data:/app/data:ro
-      - ./data:/data
+      - ./backend/data:/app/data
     depends_on:
       - redis
     networks:
