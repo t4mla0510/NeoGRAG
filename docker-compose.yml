@@ -43,6 +43,7 @@ services:
       - ./backend/cache:/app/cache
       - ./backend/chroma_data:/app/chroma_data
       - ./backend/data:/app/data:ro
+      - ./data:/data
     depends_on:
       - redis
     networks:
