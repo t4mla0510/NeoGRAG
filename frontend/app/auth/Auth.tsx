@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import "./Auth.css";
 import { assets } from "../components/assets";
@@ -45,10 +46,10 @@ export default function Auth() {
 
   return (
     <div className="auth-container">
-      <a href="/" className="auth-back-button">
+      <Link href="/" className="auth-back-button">
         <span className="material-symbols-outlined">arrow_back</span>
         Quay lại trang chủ
-      </a>
+      </Link>
       <div className="auth-box">
         <Image src={assets.ctu} alt="Logo" className="auth-logo" width={330} height={120} priority />
 
