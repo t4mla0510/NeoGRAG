@@ -8,12 +8,14 @@ import {
 } from 'ai';
 import { model } from '@/providers/ollama';
 import { searchTools } from '@/tools/search-tools';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 export type ChatTools = InferUITools<typeof searchTools>;
 
 export type ChatMessage = UIMessage<never, UIDataTypes, ChatTools>;
 
-const systemPrompt = process.env.SYSTEM_PROMPT_REBOT || `You are a helpful assistant`;
+const systemPrompt = readFileSync(join(process.cwd(), 'system-prompt.txt'), 'utf-8');
 
 export async function POST(req: Request) {
   const { messages }: { messages: ChatMessage[] } = await req.json();

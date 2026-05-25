@@ -46,7 +46,7 @@ services:
     networks:
       - neograg_network
 
-frontend:
+  frontend:
     image: neograg-frontend:latest
     container_name: neograg-frontend
     build:
@@ -54,8 +54,8 @@ frontend:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
-    environment:
-      - SYSTEM_PROMPT_REBOT=${SYSTEM_PROMPT_REBOT}
+    volumes:
+      - ./system-prompt.txt:/app/system-prompt.txt:ro
     env_file:
       - .env
     expose:
