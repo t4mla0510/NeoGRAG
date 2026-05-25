@@ -1,4 +1,15 @@
 services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: neograg-cloudflared
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    env_file:
+      - .env
+    depends_on:
+      - nginx
+    networks:
+      - neograg_network
+
   nginx:
     image: nginx:alpine
     container_name: neograg-nginx
@@ -6,9 +17,21 @@ services:
       - "80:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-    depends_on:
-      - frontend
-      - backend
+      - ./maintenance:/usr/share/nginx/html:ro
+    networks:
+      - neograg_network
+
+  postgres:
+    image: postgres:17
+    container_name: neograg-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin}
+      POSTGRES_DB: ${POSTGRES_DB:-neograg}
+    expose:
+      - "5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - neograg_network
 
@@ -20,31 +43,6 @@ services:
       - "6379"
     volumes:
       - redis_data:/data
-    networks:
-      - neograg_network
-
-  backend:
-    image: neograg-backend:latest
-    container_name: neograg-backend
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    env_file:
-      - .env
-    environment:
-      HF_HOME: /hf_cache
-      HF_HUB_CACHE: /hf_cache/hub
-      TRANSFORMERS_CACHE: /hf_cache/transformers
-      TORCH_HOME: /hf_cache/torch
-    expose:
-      - "8000"
-    volumes:
-      - hf_cache:/hf_cache
-      - ./backend/cache:/app/cache
-      - ./backend/chroma_data:/app/chroma_data
-      - ./backend/data:/app/data
-    depends_on:
-      - redis
     networks:
       - neograg_network
 
@@ -72,3 +70,4 @@ networks:
 volumes:
   hf_cache:
   redis_data:
+  postgres_data:
