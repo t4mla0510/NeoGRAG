@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "REBot",
-  description: "Trợ lý ảo hỗ trợ tra cứu và tư vấn quy chế đào tạo Trường Đại học Cần Thơ",
+  description: "Trợ lý ảo hỗ trợ tra cứu và tư vấn quy chế đào tạo Đại học Cần Thơ",
   icons: {
     icon: "/logo.png",
     apple: "/apple-touch-icon.png",

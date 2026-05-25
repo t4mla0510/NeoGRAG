@@ -73,7 +73,7 @@ const LandingPage = () => {
                     <div className="container d-flex flex-column align-items-center text-center">
                         <h2 data-aos="fade-up" data-aos-delay="100">REBot</h2>
                         <p data-aos="fade-up" data-aos-delay="200">
-                            Hỗ trợ tra cứu và tư vấn quy chế đào tạo Trường Đại học Cần Thơ<br />
+                            Hỗ trợ tra cứu và tư vấn quy chế đào tạo Đại học Cần Thơ<br />
                             một cách chính xác, nhanh chóng và liên tục 24/7
                         </p>
                         <div data-aos="fade-up" data-aos-delay="300">
@@ -92,7 +92,7 @@ const LandingPage = () => {
                         <div className="row gy-4 justify-content-center">
                             <div className="col-lg-6 content" data-aos="fade-up" data-aos-delay="100">
                                 <p>
-                                    REBot là trợ lý học vụ thông minh do đội ngũ sinh viên Trường Đại học Cần Thơ phát triển,
+                                    REBot là trợ lý học vụ thông minh do đội ngũ sinh viên Đại học Cần Thơ phát triển,
                                     với mục tiêu hỗ trợ tự động trong việc tra cứu và giải đáp các vấn đề liên quan đến:
                                 </p>
                                 <ul>
@@ -143,7 +143,7 @@ const LandingPage = () => {
                                 <div className="service-item">
                                     <div className="icon"><i className="bi bi-shield-check"></i></div>
                                     <h3>Thông tin đáng tin cậy</h3>
-                                    <p>Dữ liệu được cập nhật từ các nguồn chính thống của Trường Đại học Cần Thơ, đảm bảo độ chính xác và tin cậy.</p>
+                                    <p>Dữ liệu được cập nhật từ các nguồn chính thống của Đại học Cần Thơ, đảm bảo độ chính xác và tin cậy.</p>
                                 </div>
                             </div>
 
@@ -155,7 +155,7 @@ const LandingPage = () => {
                 <section id="team" className="team section">
                     <div className="container section-title" data-aos="fade-up">
                         <h2>Nhóm phát triển</h2>
-                        <p>Đội ngũ sinh viên Trường Đại học Cần Thơ</p>
+                        <p>Đội ngũ sinh viên Đại học Cần Thơ</p>
                     </div>
                     <div className="container">
                         <div className="row gy-4 justify-content-center">
@@ -355,7 +355,7 @@ const LandingPage = () => {
                                         <i className="faq-icon bi bi-question-circle"></i>
                                         <h3>REBot có miễn phí không?</h3>
                                         <div className="faq-content">
-                                            <p>REBot hoàn toàn miễn phí cho sinh viên và giảng viên Trường Đại học Cần Thơ.</p>
+                                            <p>REBot hoàn toàn miễn phí cho sinh viên và giảng viên Đại học Cần Thơ.</p>
                                         </div>
                                         <i className="faq-toggle bi bi-chevron-right"></i>
                                     </div>
