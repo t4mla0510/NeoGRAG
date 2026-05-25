@@ -15,10 +15,9 @@ export type ChatTools = InferUITools<typeof searchTools>;
 
 export type ChatMessage = UIMessage<never, UIDataTypes, ChatTools>;
 
-const systemPrompt = readFileSync(join(process.cwd(), 'system-prompt.txt'), 'utf-8');
-
 export async function POST(req: Request) {
   const { messages }: { messages: ChatMessage[] } = await req.json();
+  const systemPrompt = readFileSync(join(process.cwd(), 'system-prompt.txt'), 'utf-8');
 
   const result = streamText({
     model: model,
