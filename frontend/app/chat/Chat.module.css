@@ -358,13 +358,13 @@
   height: 42px;
 }
 
-.prompt-input:valid ~ .prompt-actions {
-  opacity: 1;
-  transform: scale(1);
-  pointer-events: all;
+.prompt-input:invalid ~ .prompt-actions {
+  opacity: 0;
+  transform: scale(0.8);
+  pointer-events: none;
 }
 
-.prompt-input:valid ~ .prompt-actions {
+.prompt-input:invalid ~ .prompt-actions {
   opacity: 0;
   transform: scale(0.8);
   pointer-events: none;
