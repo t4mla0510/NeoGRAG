@@ -46,6 +46,31 @@ services:
     networks:
       - neograg_network
 
+  backend:
+    image: neograg-backend:latest
+    container_name: neograg-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      HF_HOME: /hf_cache
+      HF_HUB_CACHE: /hf_cache/hub
+      TRANSFORMERS_CACHE: /hf_cache/transformers
+      TORCH_HOME: /hf_cache/torch
+    expose:
+      - "8000"
+    volumes:
+      - hf_cache:/hf_cache
+      - ./cache:/app/cache
+      - ./chroma_data:/app/chroma_data
+      - ./data:/app/data
+    depends_on:
+      - redis
+    networks:
+      - neograg_network
+
   frontend:
     image: neograg-frontend:latest
     container_name: neograg-frontend
