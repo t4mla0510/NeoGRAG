@@ -47,7 +47,7 @@ services:
       - neograg_network
 
   backend:
-    image: neograg-backend:latest
+    image: tamb2203579/neograg-backend:latest
     container_name: neograg-backend
     build:
       context: ./backend
@@ -72,7 +72,7 @@ services:
       - neograg_network
 
   frontend:
-    image: neograg-frontend:latest
+    image: tamb2203579/neograg-frontend:latest
     container_name: neograg-frontend
     build:
       context: ./frontend
