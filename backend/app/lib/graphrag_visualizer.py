@@ -164,7 +164,6 @@ class GraphRAGVisualizer:
       <div>Nodes: <b>{len(vis_nodes)}</b></div>
       <div>Edges: <b>{len(vis_edges)}</b></div>
       <div>Communities: <b>{len(community_ids)}</b></div>
-      <div>Source: <code>{graph_path.as_posix()}</code></div>
     </div>
     <div class="legend" id="legend"></div>
     <div class="panel">

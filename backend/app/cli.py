@@ -191,7 +191,7 @@ def cmd_build_graphrag(args: argparse.Namespace) -> None:
         GraphRAGVisualizer.render_html(
             graph_json_path=json_path,
             output_html_path=html_path,
-            title=f"Knowledge Graph - {args.collection}",
+            title=f"Đồ thị tri thức - Quy chế học vụ CTU",
         )
 
     print("\nGraphRAG build complete:")
@@ -522,6 +522,17 @@ def main() -> None:
         help="Ontology mode (default: auto).",
     )
     build_graphrag_parser.add_argument(
+        "--ontology-path",
+        default=None,
+        help="Path to ontology JSON file.",
+    )
+    build_graphrag_parser.add_argument(
+        "--ontology-sample-chars",
+        type=int,
+        default=50000,
+        help="Characters to sample for ontology generation (default: 50000).",
+    )
+    build_graphrag_parser.add_argument(
         "--quiet",
         action="store_true",
         help="Suppress progress bar output.",
@@ -564,6 +575,17 @@ def main() -> None:
         default="reuse",
         choices=["auto", "reuse", "static"],
         help="Ontology mode (default: reuse).",
+    )
+    update_graphrag_parser.add_argument(
+        "--ontology-path",
+        default=None,
+        help="Path to ontology JSON file.",
+    )
+    update_graphrag_parser.add_argument(
+        "--ontology-sample-chars",
+        type=int,
+        default=50000,
+        help="Characters to sample for ontology generation (default: 50000).",
     )
     update_graphrag_parser.add_argument(
         "--quiet",

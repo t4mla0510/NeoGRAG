@@ -18,7 +18,6 @@ import networkx as nx
 from networkx.readwrite import json_graph
 
 GraphT = nx.MultiDiGraph
-from underthesea import ner
 
 from app.config import PROJECT_ROOT, config
 from app.lib.ontology_generator import (
@@ -26,7 +25,7 @@ from app.lib.ontology_generator import (
     to_pascal_case,
     to_upper_snake_case,
 )
-from app.services.ned import NEDService
+from app.lib.entity_extractor import OntologyEntityExtractor, OntologyRelationExtractor
 from app.utils.llm_client import LLMClient
 from app.utils.text_utils import split_text_into_chunks
 
@@ -151,7 +150,8 @@ class GraphRAGBuilder:
         self.ontology_sample_chars = ontology_sample_chars
         self.llm = LLMClient()
         self.ontology_generator = OntologyGenerator(self.llm)
-        self.ned = NEDService.get_instance()
+        self.entity_extractor = OntologyEntityExtractor(self.llm)
+        self.relation_extractor = OntologyRelationExtractor(self.llm)
         self.output_dir = config.GRAPHRAG_DIR
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.cache_dir = config.GRAPHRAG_CACHE_DIR
@@ -508,31 +508,6 @@ class GraphRAGBuilder:
             "confidence": confidence,
         }
 
-    def _validate_entity(self, entity: dict[str, Any], allowed_entity_types: list[str]) -> dict[str, Any]:
-        name = str(entity.get("name", "")).strip()
-        entity_type = to_pascal_case(str(entity.get("entity_type", "AcademicEntity")))
-        if entity_type not in allowed_entity_types:
-            entity_type = self._fallback_entity_type(name, {"entity_types": [{"name": t} for t in allowed_entity_types]})
-        canonical_name = self._canonicalize(str(entity.get("canonical_name") or name))
-        return {
-            "name": name,
-            "entity_type": entity_type,
-            "canonical_name": canonical_name,
-            "confidence": self._safe_confidence(entity.get("confidence", 0.7)),
-        }
-
-    def _dedupe_entities(self, entities: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        by_key: dict[str, dict[str, Any]] = {}
-        for entity in entities:
-            payload = self._normalize_entity_payload(entity)
-            key = payload["canonical_name"]
-            if not key:
-                continue
-            current = by_key.get(key)
-            if current is None or payload["confidence"] > current["confidence"]:
-                by_key[key] = payload
-        return list(by_key.values())
-
     def _fallback_entity_type(self, name: str, ontology: dict[str, Any]) -> str:
         allowed = {entity["name"] for entity in ontology.get("entity_types", [])}
         lower = name.lower()
@@ -547,172 +522,9 @@ class GraphRAGBuilder:
         return next(iter(allowed), "AcademicEntity")
 
     def _extract_chunk(self, chunk: str, ontology: dict[str, Any]) -> tuple[list[dict], list[dict]]:
-        seed_entities = self._extract_entities(chunk, ontology)
-        llm_entities, relations = self._extract_relations_with_llm(chunk, seed_entities, ontology)
-        entities = self._dedupe_entities(seed_entities + llm_entities)
+        entities = self.entity_extractor.extract(chunk, ontology)
+        relations = self.relation_extractor.extract(chunk, ontology, entities)
         return entities, relations
-
-    def _extract_entities(self, text: str, ontology: dict[str, Any]) -> list[dict]:
-        seeds = set()
-        try:
-            for token, tag, *_ in ner(text):
-                if tag in {"N", "Np", "Nb"} and not re.search(r"\d", token):
-                    token = token.strip()
-                    if len(token) >= 2:
-                        seeds.add(token)
-        except Exception:
-            pass
-
-        matched = self.ned._match_entities(text)  # noqa: SLF001 - reuse curated matching
-        for item in matched:
-            seeds.add(item.entity.strip())
-        return [
-            {
-                "name": seed,
-                "entity_type": self._fallback_entity_type(seed, ontology),
-                "canonical_name": self._canonicalize(seed),
-                "confidence": 0.6,
-            }
-            for seed in sorted(seeds)
-        ]
-
-    def _extract_relations_with_llm(
-        self,
-        text: str,
-        entities: list[dict],
-        ontology: dict[str, Any],
-    ) -> tuple[list[dict], list[dict]]:
-        entity_hint = ", ".join(entity["name"] for entity in entities[:30])
-        entity_types = [entity["name"] for entity in ontology.get("entity_types", [])]
-        relation_types = [edge["name"] for edge in ontology.get("edge_types", [])]
-        if "RELATED_TO" not in relation_types:
-            relation_types.append("RELATED_TO")
-        ontology_brief = json.dumps(
-            {
-                "entity_types": ontology.get("entity_types", []),
-                "edge_types": ontology.get("edge_types", []),
-            },
-            ensure_ascii=False,
-        )[:6000]
-        prompt = f"""
-You are a knowledge extraction expert for Vietnamese academic-regulation documents.
-Goal:
-- Extract HIGH-PRECISION relationships between entities from the provided chunk.
-- Follow the ontology exactly, but adapt to data when needed using fallback types.
-
-Output requirements:
-- Return ONLY valid JSON object (no markdown, no explanation).
-- Must match this exact schema:
-{{
-  "entities": [
-    {{
-      "name": "Vietnamese entity text exactly as it appears in the source chunk",
-      "entity_type": "one ontology entity type",
-      "canonical_name": "normalized lowercase Vietnamese canonical form",
-      "confidence": 0.0
-    }}
-  ],
-  "relations": [
-    {{
-      "source": "entity A",
-      "target": "entity B",
-      "relation": "one ontology relation type",
-      "confidence": 0.0,
-      "evidence": "short evidence span from text",
-      "extraction_type": "EXTRACTED or INFERRED"
-    }}
-  ]
-}}
-
-Entity typing policy:
-- Entity name MUST stay Vietnamese when the source text is Vietnamese.
-- Preserve Vietnamese diacritics and the source phrase whenever possible.
-- Do not translate entity names to English. English is allowed only for entity_type and relation labels.
-- Entity type MUST be one of the ontology entity types.
-- If ambiguous, use AcademicEntity, Person, or Organization instead of inventing noisy types.
-- Keep canonical_name stable for dedup using Vietnamese lowercase, trim, and no extra punctuation.
-
-Allowed relation labels:
-{", ".join(relation_types)}
-- If unclear, use RELATED_TO (fallback).
-
-Relation extraction rules:
-- Relation labels MUST remain English UPPER_SNAKE_CASE from the ontology.
-- Keep confidence in [0,1].
-- source/target should be concrete entities in this chunk.
-- source/target MUST use the Vietnamese entity names, not translated English names.
-- evidence should be a verbatim short span (<= 220 chars) supporting the relation.
-- Do NOT produce duplicate relations with same (source, relation, target, evidence).
-- Prefer EXTRACTED when explicit in text; use INFERRED only for high-confidence implication.
-
-Adaptation rule (important):
-- If chunk uses domain-specific terms not in hints, still extract them using the closest entity_type.
-- Do not force invalid mappings; fallback safely using AcademicEntity + RELATED_TO.
-
-Quality guardrails:
-- Prioritize precision over recall.
-- Ignore decorative or conversational text.
-- If no reliable relation exists, return empty relations array.
-
-Entities hint: {entity_hint}
-Ontology:
-{ontology_brief}
-Text:
-\"\"\"{text[:3000]}\"\"\"
-"""
-        try:
-            raw = self.llm.generate(prompt)
-            data = self._extract_json(raw)
-            llm_entities = data.get("entities", [])
-            relations = data.get("relations", [])
-            cleaned_entities = []
-            for entity in llm_entities:
-                if not isinstance(entity, dict) or not entity.get("name"):
-                    continue
-                cleaned_entities.append(self._validate_entity(entity, entity_types))
-
-            entity_type_by_name = {
-                self._canonicalize(entity["name"]): entity["entity_type"]
-                for entity in cleaned_entities + entities
-            }
-
-            cleaned_relations = []
-            for rel in relations:
-                if not isinstance(rel, dict):
-                    continue
-                if not rel.get("source") or not rel.get("target"):
-                    continue
-                relation = to_upper_snake_case(str(rel.get("relation", "RELATED_TO")))
-                if relation not in relation_types:
-                    relation = "RELATED_TO"
-                rel["relation"] = relation
-                rel["source_entity_type"] = entity_type_by_name.get(
-                    self._canonicalize(rel["source"]),
-                    "AcademicEntity",
-                )
-                rel["target_entity_type"] = entity_type_by_name.get(
-                    self._canonicalize(rel["target"]),
-                    "AcademicEntity",
-                )
-                cleaned_relations.append(rel)
-            return cleaned_entities, cleaned_relations
-        except Exception as exc:
-            logger.warning("GraphRAG LLM extraction failed: %s", exc)
-            return [], []
-
-    @staticmethod
-    def _extract_json(content: str) -> dict:
-        content = content.strip()
-        try:
-            return json.loads(content)
-        except json.JSONDecodeError:
-            match = re.search(r"\{.*\}", content, re.DOTALL)
-            if not match:
-                return {"relations": []}
-            try:
-                return json.loads(match.group(0))
-            except json.JSONDecodeError:
-                return {"relations": []}
 
     def _persist_graph(self, graph: GraphT) -> None:
         data = json_graph.node_link_data(graph, edges="links")
