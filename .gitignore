@@ -68,4 +68,6 @@ Thumbs.db
 .idea/
 .gitnexus/
 
+# Documentation files
 *.txt
+*.md
