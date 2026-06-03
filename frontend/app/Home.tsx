@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 
 // Vendor CSS
@@ -22,6 +22,8 @@ const logoImg = '/assets/logo.png';
 
 const LandingPage = () => {
     const rootRef = useRef(null);
+    const [contactStatus, setContactStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+    const [contactForm, setContactForm] = useState({ name: '', email: '', subject: '', message: '' });
 
     useEffect(() => {
         let cleanup = null;
@@ -412,25 +414,89 @@ const LandingPage = () => {
                             </div>
 
                             <div className="col-lg-8">
-                                <form action="forms/contact.php" method="post" className="php-email-form" data-aos="fade-up" data-aos-delay="200">
+                                <form
+                                    className="php-email-form"
+                                    data-aos="fade-up"
+                                    data-aos-delay="200"
+                                    onSubmit={async e => {
+                                        e.preventDefault();
+                                        if (contactStatus === 'loading') return;
+                                        setContactStatus('loading');
+                                        try {
+                                            const res = await fetch('/api/contact', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify(contactForm),
+                                            });
+                                            if (res.ok) {
+                                                setContactStatus('success');
+                                                setContactForm({ name: '', email: '', subject: '', message: '' });
+                                            } else {
+                                                setContactStatus('error');
+                                            }
+                                        } catch {
+                                            setContactStatus('error');
+                                        }
+                                    }}
+                                >
                                     <div className="row gy-4">
                                         <div className="col-md-6">
-                                            <input type="text" name="name" className="form-control" placeholder="Họ và tên" required />
+                                            <input
+                                                type="text"
+                                                name="name"
+                                                className="form-control"
+                                                placeholder="Họ và tên"
+                                                required
+                                                value={contactForm.name}
+                                                onChange={e => setContactForm(prev => ({ ...prev, name: e.target.value }))}
+                                            />
                                         </div>
                                         <div className="col-md-6">
-                                            <input type="email" className="form-control" name="email" placeholder="Địa chỉ Email" required />
+                                            <input
+                                                type="email"
+                                                className="form-control"
+                                                name="email"
+                                                placeholder="Địa chỉ Email"
+                                                required
+                                                value={contactForm.email}
+                                                onChange={e => setContactForm(prev => ({ ...prev, email: e.target.value }))}
+                                            />
                                         </div>
                                         <div className="col-md-12">
-                                            <input type="text" className="form-control" name="subject" placeholder="Tiêu đề" required />
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                name="subject"
+                                                placeholder="Tiêu đề"
+                                                required
+                                                value={contactForm.subject}
+                                                onChange={e => setContactForm(prev => ({ ...prev, subject: e.target.value }))}
+                                            />
                                         </div>
                                         <div className="col-md-12">
-                                            <textarea className="form-control" name="message" rows={6} placeholder="Nội dung" required></textarea>
+                                            <textarea
+                                                className="form-control"
+                                                name="message"
+                                                rows={6}
+                                                placeholder="Nội dung"
+                                                required
+                                                value={contactForm.message}
+                                                onChange={e => setContactForm(prev => ({ ...prev, message: e.target.value }))}
+                                            ></textarea>
                                         </div>
                                         <div className="col-md-12 text-center">
-                                            <div className="loading">Đang tải</div>
-                                            <div className="error-message"></div>
-                                            <div className="sent-message">Tin nhắn đã được gửi. Cảm ơn bạn!</div>
-                                            <button type="submit" disabled>Gửi</button>
+                                            {contactStatus === 'loading' && (
+                                                <div className="loading">Đang tải</div>
+                                            )}
+                                            {contactStatus === 'error' && (
+                                                <div className="error-message">Gửi tin nhắn thất bại. Vui lòng thử lại sau.</div>
+                                            )}
+                                            {contactStatus === 'success' && (
+                                                <div className="sent-message">Tin nhắn đã được gửi. Cảm ơn bạn!</div>
+                                            )}
+                                            <button type="submit" disabled={contactStatus === 'loading'}>
+                                                {contactStatus === 'loading' ? 'Đang gửi...' : 'Gửi'}
+                                            </button>
                                         </div>
                                     </div>
                                 </form>

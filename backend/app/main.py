@@ -25,6 +25,7 @@ from app.utils.bm25_indexer import BM25Indexer
 from app.routers import files, knowledge_graph, process
 from app.routers.auth import router as auth_router
 from app.routers.feedback import router as feedback_router
+from app.routers.contact import router as contact_router
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -66,6 +67,7 @@ app.include_router(process.router, prefix="/api", tags=["process"])
 app.include_router(knowledge_graph.router, prefix="/api", tags=["knowledge-graph"])
 app.include_router(auth_router, prefix="/api", tags=["auth"])
 app.include_router(feedback_router, prefix="/api", tags=["feedback"])
+app.include_router(contact_router, prefix="/api", tags=["contact"])
 
 
 @app.post("/search/vector")

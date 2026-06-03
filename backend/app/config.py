@@ -56,6 +56,7 @@ class Config:
     GRAPHRAG_CONTEXT_HOPS: int = int(os.environ.get("GRAPHRAG_CONTEXT_HOPS", "2"))
     GRAPHRAG_TOP_NEIGHBORS: int = int(os.environ.get("GRAPHRAG_TOP_NEIGHBORS", "12"))
 
-    FEEDBACK_CSV = DATA_DIR / "feedback.csv"
+    FEEDBACK_CSV: Path = DATA_DIR / "feedback.csv"
+    CONTACT_CSV: Path = DATA_DIR / "contact.csv"
 
 config = Config()

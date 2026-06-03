@@ -150,7 +150,7 @@
 /* PHP Email Form Messages
 ------------------------------*/
 .landing-page .php-email-form .error-message {
-  display: none;
+  display: block;
   background: #df1529;
   color: #ffffff;
   text-align: left;
@@ -160,7 +160,7 @@
 }
 
 .landing-page .php-email-form .sent-message {
-  display: none;
+  display: block;
   color: #ffffff;
   background: #059652;
   text-align: center;
@@ -170,7 +170,7 @@
 }
 
 .landing-page .php-email-form .loading {
-  display: none;
+  display: block;
   background: var(--surface-color);
   text-align: center;
   padding: 15px;
