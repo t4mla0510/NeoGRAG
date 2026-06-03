@@ -124,6 +124,36 @@
   gap: 12px;
 }
 
+.bot-message-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  max-width: 80%;
+}
+
+.message-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-left: 4px;
+}
+
+.copy-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #9aa0a6;
+  padding: 2px;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.copy-btn:hover {
+  color: #00afef;
+}
+
 .bot-message .avatar {
   height: 40px;
   width: 40px;
@@ -159,7 +189,7 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   font-size: 15px;
   line-height: 1.6;
-  max-width: 80%;
+  max-width: 100%;
   border: 1px solid rgba(0, 175, 239, 0.1);
 }
 
@@ -449,6 +479,96 @@
     opacity: 0.5;
   }
   40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Delete confirmation modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-box {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 28px 32px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  animation: scaleIn 0.25s ease;
+}
+
+.modal-title {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f5ca9;
+  font-family: 'K2D', sans-serif;
+}
+
+.modal-body {
+  margin: 0 0 24px 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #555;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.modal-btn-secondary {
+  padding: 10px 24px;
+  border-radius: 30px;
+  border: 1px solid rgba(31, 92, 169, 0.2);
+  background: #ffffff;
+  color: #1f5ca9;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-btn-secondary:hover {
+  background: #f0f7ff;
+  border-color: rgba(31, 92, 169, 0.4);
+}
+
+.modal-btn-danger {
+  padding: 10px 24px;
+  border-radius: 30px;
+  border: none;
+  background: linear-gradient(135deg, #ff4757, #ff6b81);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
+}
+
+.modal-btn-danger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(255, 71, 87, 0.4);
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  to {
     transform: scale(1);
     opacity: 1;
   }

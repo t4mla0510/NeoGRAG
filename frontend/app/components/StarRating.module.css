@@ -1,0 +1,44 @@
+.container {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.label {
+  font-size: 13px;
+  color: #777;
+  font-family: 'K2D', sans-serif;
+}
+
+.stars {
+  display: flex;
+  gap: 4px;
+}
+
+.star {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #d0d0d0;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s ease, transform 0.15s ease;
+}
+
+.star:hover,
+.star.active {
+  color: #ffc107;
+}
+
+.star:hover {
+  transform: scale(1.2);
+}
+
+.thanks {
+  font-size: 12px;
+  color: #00afef;
+  font-family: 'K2D', sans-serif;
+}
