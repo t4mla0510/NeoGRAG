@@ -10,7 +10,13 @@ import Link from 'next/link';
 import styles from './Chat.module.css';
 import StarRating from '../components/StarRating';
 import { DefaultChatTransport } from 'ai';
+import type { Components } from 'react-markdown';
 
+const markdownComponents: Partial<Components> = {
+  a: ({ node, ...props }) => (
+    <a {...props} target="_blank" rel="noopener noreferrer" />
+  ),
+};
 declare global {
   interface Window {
     SpeechRecognition: {
@@ -300,6 +306,7 @@ const Chat = () => {
                                 key={`${message.id}-${i}`}
                                 remarkPlugins={[remarkGfm]}
                                 rehypePlugins={[rehypeRaw]}
+                                components={markdownComponents}
                               >
                                 {part.text}
                               </ReactMarkdown>

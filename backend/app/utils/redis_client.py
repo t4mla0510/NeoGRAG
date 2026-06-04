@@ -85,3 +85,29 @@ class RedisClient:
         normalized_query = self._normalize_query(query)
         query_hash = self._hash_key(normalized_query)
         return f"search:{query_hash}:{collection_name}:{top_k}:{multiplier}"
+
+    def invalidate_collection_cache(self, collection_name: str) -> bool:
+        """Delete all cached search / rerank keys for a collection.
+
+        Should be called after ingesting or updating documents
+        so that subsequent queries reflect the new data.
+        """
+        try:
+            patterns = [
+                f"search:*:{collection_name}:*",
+                f"semantic:*:{collection_name}:*",
+                f"keyword:*:{collection_name}:*",
+                f"rerank:*",
+            ]
+            count = 0
+            for pattern in patterns:
+                for key in self.client.scan_iter(match=pattern):
+                    self.client.delete(key)
+                    count += 1
+            logger.info(
+                f"Invalidated {count} cache keys for collection '{collection_name}'"
+            )
+            return True
+        except Exception as e:
+            logger.warning(f"Cache invalidation failed for '{collection_name}': {e}")
+            return False

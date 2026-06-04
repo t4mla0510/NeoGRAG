@@ -110,6 +110,14 @@ def start_processing(request: ProcessStartRequest):
                 )
                 bm25_indexer.save_index(collection_name)
 
+            try:
+                from app.utils.redis_client import RedisClient
+                redis_client = RedisClient.get_instance()
+                redis_client.invalidate_collection_cache(collection_name)
+            except Exception as exc:
+                import logging
+                logging.getLogger(__name__).warning(f"Failed to invalidate search cache: {exc}")
+
             updated = update_file(
                 item_config.fileId,
                 {
