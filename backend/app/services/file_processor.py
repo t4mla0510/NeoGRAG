@@ -9,7 +9,7 @@ from app.utils.text_utils import split_text_into_chunks
 
 import docx
 from docling.datamodel.base_models import InputFormat
-from docling.datamodel.pipeline_options import PdfPipelineOptions, EasyOcrOptions
+from docling.datamodel.pipeline_options import PdfPipelineOptions, TesseractOcrOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption
 
 logger = logging.getLogger(__name__)
@@ -68,11 +68,26 @@ class FileProcessor:
     def _process_pdf(self, file_path: Path) -> tuple[list[str], list[str], list[dict]]:
         return self.process_text(file_path, self._extract_pdf_markdown(file_path))
 
+    def _has_text_layer(self, file_path: Path, sample_pages: int = 2) -> bool:
+        from pypdf import PdfReader
+
+        reader = PdfReader(str(file_path))
+        page_limit = min(sample_pages, len(reader.pages))
+        for i in range(page_limit):
+            text = (reader.pages[i].extract_text() or "").strip()
+            if len(text) >= 40:
+                return True
+        return False
+
     def _extract_pdf_markdown(self, file_path: Path) -> str:
+        enable_ocr = self.use_ocr or not self._has_text_layer(file_path)
         pipeline_options = PdfPipelineOptions()
-        if self.use_ocr:
+        if enable_ocr:
             pipeline_options.do_ocr = True
-            pipeline_options.ocr_options = EasyOcrOptions(force_full_page_ocr=True)
+            pipeline_options.ocr_options = TesseractOcrOptions(
+                force_full_page_ocr=True,
+                lang=["vie", "eng"],
+            )
 
         converter = DocumentConverter(
             format_options={

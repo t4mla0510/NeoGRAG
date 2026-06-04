@@ -24,6 +24,7 @@ dependencies = [
     "passlib>=1.7.4",
     "psycopg2-binary>=2.9.9",
     "pydantic>=2.13.4",
+    "pypdf>=6.12.2",
     "python-docx>=1.2.0",
     "python-dotenv>=1.2.2",
     "python-jose[cryptography]>=3.3.0",
