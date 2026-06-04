@@ -297,22 +297,23 @@ const Chat = () => {
                     />
                     <div className={styles['bot-message-content']}>
                       <div className={`${styles['message-text']} prose prose-sm max-w-none`}>
-                        {message.parts.some(
-                          part => part.type === 'text' && part.text.trim()
-                        ) ? (
-                          message.parts.map((part, i) =>
-                            part.type === 'text' ? (
-                              <ReactMarkdown
-                                key={`${message.id}-${i}`}
-                                remarkPlugins={[remarkGfm]}
-                                rehypePlugins={[rehypeRaw]}
-                                components={markdownComponents}
-                              >
-                                {part.text}
-                              </ReactMarkdown>
-                            ) : null
-                          )
-                        ) : isLoading ? (
+                        {message.parts.map((part, i) => {
+                          if (part.type !== 'text') return null;
+                          if (!part.text.trim()) return null;
+                          return (
+                            <ReactMarkdown
+                              key={`${message.id}-${i}`}
+                              remarkPlugins={[remarkGfm]}
+                              rehypePlugins={[rehypeRaw]}
+                              components={markdownComponents}
+                            >
+                              {part.text}
+                            </ReactMarkdown>
+                          );
+                        })}
+                        {message.parts.every(
+                          part => part.type !== 'text' || !part.text.trim()
+                        ) && status !== 'ready' ? (
                           <div className={styles['typing-indicator']} aria-label="REBot đang trả lời">
                             <span />
                             <span />
