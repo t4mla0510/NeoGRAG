@@ -59,6 +59,7 @@ services:
       HF_HUB_CACHE: /hf_cache/hub
       TRANSFORMERS_CACHE: /hf_cache/transformers
       TORCH_HOME: /hf_cache/torch
+      OLLAMA_MODEL: ${BACKEND_OLLAMA_MODEL}
     expose:
       - "8000"
     volumes:
@@ -83,6 +84,8 @@ services:
       - ./system-prompt.txt:/app/system-prompt.txt:ro
     env_file:
       - .env
+    environment:
+      OLLAMA_MODEL: ${FRONTEND_OLLAMA_MODEL}
     expose:
       - "3000"
     depends_on:
