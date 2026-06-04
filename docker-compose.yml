@@ -59,6 +59,7 @@ services:
       HF_HUB_CACHE: /hf_cache/hub
       TRANSFORMERS_CACHE: /hf_cache/transformers
       TORCH_HOME: /hf_cache/torch
+      RAPIDOCR_HOME: /hf_cache/rapidocr
       OLLAMA_MODEL: ${BACKEND_OLLAMA_MODEL}
     expose:
       - "8000"

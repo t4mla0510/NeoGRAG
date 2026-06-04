@@ -9,7 +9,7 @@ from app.utils.text_utils import split_text_into_chunks
 
 import docx
 from docling.datamodel.base_models import InputFormat
-from docling.datamodel.pipeline_options import PdfPipelineOptions, TesseractOcrOptions
+from docling.datamodel.pipeline_options import PdfPipelineOptions, RapidOcrOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption
 
 logger = logging.getLogger(__name__)
@@ -84,9 +84,8 @@ class FileProcessor:
         pipeline_options = PdfPipelineOptions()
         if enable_ocr:
             pipeline_options.do_ocr = True
-            pipeline_options.ocr_options = TesseractOcrOptions(
+            pipeline_options.ocr_options = RapidOcrOptions(
                 force_full_page_ocr=True,
-                lang=["vie", "eng"],
             )
 
         converter = DocumentConverter(

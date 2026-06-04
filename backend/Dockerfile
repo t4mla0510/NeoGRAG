@@ -9,6 +9,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     HF_HOME=/hf_cache \
     TRANSFORMERS_CACHE=/hf_cache/transformers \
     TORCH_HOME=/hf_cache/torch \
+    RAPIDOCR_HOME=/hf_cache/rapidocr \
     PORT=8000
 
 WORKDIR /app
@@ -18,6 +19,7 @@ RUN apt-get update \
         libgl1 \
         libglib2.0-0 \
         libgomp1 \
+        poppler-utils \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt ./
@@ -33,8 +35,12 @@ RUN python -m pip install --upgrade pip \
 COPY app ./app
 
 RUN useradd --create-home --shell /usr/sbin/nologin appuser \
-    && mkdir -p /app/cache /app/chroma_data /app/data /hf_cache \
-    && chown -R appuser:appuser /app /hf_cache
+    && mkdir -p /app/cache /app/chroma_data /app/data /hf_cache /hf_cache/rapidocr \
+    && chown -R appuser:appuser /app /hf_cache \
+    && RAPIDOCR_PATH=$(python -c "import rapidocr, os; print(os.path.dirname(rapidocr.__file__))") \
+    && mkdir -p "$RAPIDOCR_PATH/models" \
+    && chown -R appuser:appuser "$RAPIDOCR_PATH" \
+    && chmod -R u+w "$RAPIDOCR_PATH"
 
 USER appuser
 
