@@ -9,23 +9,9 @@ from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import config
-from app.schemas import (
-    GraphSearchRequest,
-    GraphSearchResult,
-    HybridSearchRequest,
-    KeywordSearchRequest,
-    VectorSearchRequest,
-)
-from app.services.graphrag import GraphRAGService
-from app.services.hybrid_search import HybridSearch
-from app.services.keyword_search import KeywordSearch
-from app.services.ned import NEDService
-from app.services.semantic_search import SemanticSearch
 from app.utils.bm25_indexer import BM25Indexer
 from app.routers import files, knowledge_graph, process
-from app.routers.auth import router as auth_router
-from app.routers.feedback import router as feedback_router
-from app.routers.contact import router as contact_router
+from app.routers import auth_router, contact_router, feedback_router, search_router
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -56,101 +42,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-hybrid_search = HybridSearch.get_instance()
-ned_service = NEDService.get_instance()
-graphrag_service = GraphRAGService.get_instance()
-semantic_search = SemanticSearch.get_instance()
-keyword_search = KeywordSearch.get_instance()
-
 app.include_router(files.router, prefix="/api", tags=["files"])
 app.include_router(process.router, prefix="/api", tags=["process"])
 app.include_router(knowledge_graph.router, prefix="/api", tags=["knowledge-graph"])
 app.include_router(auth_router, prefix="/api", tags=["auth"])
 app.include_router(feedback_router, prefix="/api", tags=["feedback"])
 app.include_router(contact_router, prefix="/api", tags=["contact"])
-
-
-@app.post("/search/vector")
-async def search_vector(request: VectorSearchRequest):
-    """Semantic search using ChromaDB vector store."""
-    results = semantic_search.search(
-        query=request.query,
-        collection_name="academic_regulation",
-        top_k=request.top_k,
-    )
-    return {
-        "query": request.query,
-        "results": [
-            {"id": r.id, "document": r.document, "metadata": r.metadata, "score": r.score}
-            for r in results
-        ],
-    }
-
-
-@app.post("/search/keyword")
-async def search_keyword(request: KeywordSearchRequest):
-    """BM25 keyword search for exact matching."""
-    results = keyword_search.search(
-        query=request.query,
-        collection_name="academic_regulation",
-        top_k=request.top_k,
-    )
-    return {
-        "query": request.query,
-        "results": [
-            {"id": r.id, "document": r.document, "metadata": r.metadata, "score": r.score}
-            for r in results
-        ],
-    }
-
-
-@app.post("/search/graph")
-async def search_graph(request: GraphSearchRequest):
-    """Knowledge graph lookup and neighborhood expansion."""
-    if not graphrag_service.is_available():
-        return GraphSearchResult(
-            resolved_entities=[],
-            graph_context="",
-            graph_score=0.0,
-        )
-
-    bundle = graphrag_service.build_query_bundle(
-        query=request.query,
-        enhanced_query=None,
-    )
-    return GraphSearchResult(
-        resolved_entities=bundle.resolved_entities,
-        graph_context=bundle.graph_context_text,
-        graph_score=bundle.graph_score,
-    )
-
-
-@app.post("/search/hybrid")
-async def search_hybrid(request: HybridSearchRequest):
-    """Hybrid search combining BM25 + vector + LLM reranking."""
-    enhanced_query = ned_service.enhance_query(request.query)
-
-    results = hybrid_search.search(
-        query=enhanced_query,
-        collection_name="academic_regulation",
-        top_k=request.top_k,
-    )
-
-    return {
-        "query": request.query,
-        "enhanced_query": enhanced_query,
-        "results": [
-            {
-                "id": r.id,
-                "document": r.document,
-                "metadata": r.metadata,
-                "semantic_score": r.semantic_score,
-                "keyword_score": r.keyword_score,
-                "combined_score": r.combined_score,
-            }
-            for r in results
-        ],
-    }
+app.include_router(search_router, tags=["search"])
 
 
 @app.get("/", response_class=HTMLResponse, include_in_schema=False)
@@ -179,8 +77,6 @@ def root():
                 <p>Your backend is running successfully</p>
 
                 <p>Available endpoints:</p>
-                <div class="endpoint"><code>POST /search/vector</code> - ChromaDB semantic search</div>
-                <div class="endpoint"><code>POST /search/keyword</code> - BM25 keyword search</div>
                 <div class="endpoint"><code>POST /search/graph</code> - Knowledge graph lookup</div>
                 <div class="endpoint"><code>POST /search/hybrid</code> - BM25 + vector + LLM rerank</div>
 

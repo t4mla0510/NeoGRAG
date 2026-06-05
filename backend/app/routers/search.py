@@ -4,54 +4,16 @@ from app.schemas import (
     GraphSearchRequest,
     GraphSearchResult,
     HybridSearchRequest,
-    KeywordSearchRequest,
-    VectorSearchRequest,
 )
 from app.services.graphrag import GraphRAGService
 from app.services.hybrid_search import HybridSearch
-from app.services.keyword_search import KeywordSearch
 from app.services.ned import NEDService
-from app.services.semantic_search import SemanticSearch
 
 router = APIRouter()
 
 graphrag_service = GraphRAGService.get_instance()
 hybrid_search = HybridSearch.get_instance()
 ned_service = NEDService.get_instance()
-semantic_search = SemanticSearch.get_instance()
-keyword_search = KeywordSearch.get_instance()
-
-
-@router.post("/search/vector")
-async def search_vector(request: VectorSearchRequest):
-    results = semantic_search.search(
-        query=request.query,
-        collection_name="academic_regulation",
-        top_k=request.top_k,
-    )
-    return {
-        "query": request.query,
-        "results": [
-            {"id": r.id, "document": r.document, "metadata": r.metadata, "score": r.score}
-            for r in results
-        ],
-    }
-
-
-@router.post("/search/keyword")
-async def search_keyword(request: KeywordSearchRequest):
-    results = keyword_search.search(
-        query=request.query,
-        collection_name="academic_regulation",
-        top_k=request.top_k,
-    )
-    return {
-        "query": request.query,
-        "results": [
-            {"id": r.id, "document": r.document, "metadata": r.metadata, "score": r.score}
-            for r in results
-        ],
-    }
 
 
 @router.post("/search/graph")
