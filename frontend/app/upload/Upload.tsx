@@ -131,15 +131,25 @@ export default function Upload() {
       buildTarget: 'retrieval' as const,
     }));
 
+    const targetIds = new Set(filesToProcess.map(file => file.id));
+
     setProcessing(true);
     try {
       await startProcessing(payload);
       toast.success('Xử lý Thành công');
-      await refreshFiles();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Xử lý thất bại');
-      await refreshFiles();
     } finally {
+      const maxAttempts = 30;
+      for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        await refreshFiles();
+        const latest = await listFiles();
+        const stillRunning = latest.some(
+          file => targetIds.has(file.id) && (file.status === 'processing' || file.status === 'uploaded')
+        );
+        if (!stillRunning) break;
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
       setProcessing(false);
     }
   };

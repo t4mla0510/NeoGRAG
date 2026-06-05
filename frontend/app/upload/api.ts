@@ -28,7 +28,11 @@ const configuredApiBase = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:
 const API_BASE = configuredApiBase.includes('://backend:') ? '' : configuredApiBase;
 
 async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE}${path}`, init);
+  const response = await fetch(`${API_BASE}${path}`, {
+    cache: 'no-store',
+    ...init,
+    headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', ...(init?.headers ?? {}) },
+  });
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
     throw new Error(payload.detail || payload.error || 'Request failed');
