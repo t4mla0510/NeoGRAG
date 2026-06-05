@@ -313,12 +313,16 @@ const Chat = () => {
                         })}
                         {message.parts.every(
                           part => part.type !== 'text' || !part.text.trim()
-                        ) && status !== 'ready' ? (
-                          <div className={styles['typing-indicator']} aria-label="REBot đang trả lời">
-                            <span />
-                            <span />
-                            <span />
-                          </div>
+                        ) ? (
+                          status !== 'ready' ? (
+                            <div className={styles['typing-indicator']} aria-label="REBot đang trả lời">
+                              <span />
+                              <span />
+                              <span />
+                            </div>
+                          ) : (
+                            <p>REBot không thể tạo phản hồi. Vui lòng thử lại.</p>
+                          )
                         ) : null}
                       </div>
                       {status !== 'streaming' && !isLoading && (

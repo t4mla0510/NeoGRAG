@@ -69,7 +69,14 @@ export async function deleteFiles(fileIds: string[]): Promise<void> {
   });
 }
 
-export async function startProcessing(configs: ProcessingConfig[]) {
+export interface ProcessingResult {
+  file: FileItem;
+  chunks?: number;
+  error?: string;
+  target: BuildTarget;
+}
+
+export async function startProcessing(configs: ProcessingConfig[]): Promise<{ results: ProcessingResult[] }> {
   return requestJson('/api/process/start', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

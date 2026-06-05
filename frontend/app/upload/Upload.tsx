@@ -131,25 +131,30 @@ export default function Upload() {
       buildTarget: 'retrieval' as const,
     }));
 
-    const targetIds = new Set(filesToProcess.map(file => file.id));
-
     setProcessing(true);
     try {
-      await startProcessing(payload);
-      toast.success('Xử lý Thành công');
+      const { results } = await startProcessing(payload);
+      // Patch local state with the authoritative file items returned by the
+      // backend — no extra GET, no spinner flicker, no perceived "reset".
+      if (results?.length) {
+        setFiles(current => {
+          const updates = new Map(results.map(r => [r.file.id, r.file]));
+          return current.map(file => updates.get(file.id) ?? file);
+        });
+        setSelectedIds(ids =>
+          ids.filter(id => !results.some(r => r.file.id === id && r.error))
+        );
+      }
+      const failures = results?.filter(r => r.error).length ?? 0;
+      if (failures > 0) {
+        toast.error(`${failures} tệp xử lý thất bại`);
+      } else {
+        toast.success('Xử lý thành công');
+      }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Xử lý thất bại');
+      await refreshFiles();
     } finally {
-      const maxAttempts = 30;
-      for (let attempt = 0; attempt < maxAttempts; attempt++) {
-        await refreshFiles();
-        const latest = await listFiles();
-        const stillRunning = latest.some(
-          file => targetIds.has(file.id) && (file.status === 'processing' || file.status === 'uploaded')
-        );
-        if (!stillRunning) break;
-        await new Promise(resolve => setTimeout(resolve, 1000));
-      }
       setProcessing(false);
     }
   };

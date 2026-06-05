@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { vectorSearch } from './vec';
-import { keywordSearch } from './keyword';
 import { hybridSearch } from './hybrid';
 import { graphSearch } from './graph';
 
@@ -12,12 +10,6 @@ export async function POST(request: NextRequest) {
     let result;
 
     switch (searchType) {
-      case 'vector':
-        result = await vectorSearch({ query, history });
-        break;
-      case 'keyword':
-        result = await keywordSearch({ query, history });
-        break;
       case 'hybrid':
         result = await hybridSearch({ query, history });
         break;

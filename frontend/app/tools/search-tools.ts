@@ -1,30 +1,6 @@
 import { tool } from 'ai';
 import { z } from 'zod';
-import { vectorSearch, keywordSearch, graphSearch, hybridSearch } from '@/api/search';
-
-export const vectorSearchTool = tool({
-  description:
-    'Semantic search using vector embeddings. Best for understanding meaning and context. Use when the query involves semantic understanding, synonyms, or conceptual matching.',
-  inputSchema: z.object({
-    query: z.string().describe('The search query text'),
-    top_k: z.number().optional().describe('Number of results to return (default: 5)'),
-  }),
-  execute: async ({ query, top_k = 5 }) => {
-    return vectorSearch({ query, top_k });
-  },
-});
-
-export const keywordSearchTool = tool({
-  description:
-    'Keyword-based search using BM25 algorithm. Best for exact term matching, specific phrases, or when you need precise keyword hits.',
-  inputSchema: z.object({
-    query: z.string().describe('The search query text'),
-    top_k: z.number().optional().describe('Number of results to return (default: 5)'),
-  }),
-  execute: async ({ query, top_k = 5 }) => {
-    return keywordSearch({ query, top_k });
-  },
-});
+import { graphSearch, hybridSearch } from '@/api/search';
 
 export const graphSearchTool = tool({
   description:
@@ -52,8 +28,6 @@ export const hybridSearchTool = tool({
 });
 
 export const searchTools = {
-  vectorSearch: vectorSearchTool,
-  keywordSearch: keywordSearchTool,
   graphSearch: graphSearchTool,
   hybridSearch: hybridSearchTool,
 };
