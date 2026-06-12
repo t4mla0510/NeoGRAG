@@ -236,6 +236,35 @@ const LandingPage = () => {
                     </div>
                 </section>
 
+                {/* Expert Verification Section */}
+                <section id="expert-verification" className="expert-verification section light-background">
+                    <div className="container section-title" data-aos="fade-up">
+                        <h2>Kiểm chứng từ chuyên gia</h2>
+                        <p>Các chuyên gia xác thực độ tin cậy của REBot</p>
+                    </div>
+                    <div className="container">
+                        <div className="row gy-4 justify-content-center">
+
+                            <div className="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                                <div className="expert-member text-center">
+                                    <h4>TS. Trần Việt Châu</h4>
+                                    <div className="underline"></div>
+                                    <span><em>Chuyên gia xác thực</em></span>
+                                </div>
+                            </div>
+
+                            <div className="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                                <div className="expert-member text-center">
+                                    <h4>Lương Thị Huyền Trân</h4>
+                                    <div className="underline"></div>
+                                    <span><em>Chuyên gia xác thực</em></span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
                 {/* Call To Action Section */}
                 <section id="call-to-action" className="call-to-action section dark-background">
                     <img src={ctaBg} alt="" />
