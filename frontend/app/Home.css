@@ -920,6 +920,57 @@
   color: white;
 }
 
+.landing-page .expert-verification .expert-member {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 30px 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s;
+}
+
+.landing-page .expert-verification .expert-member:hover {
+  transform: translateY(-5px);
+}
+
+.landing-page .expert-verification .expert-member h4 {
+  font-weight: 700;
+  font-size: 20px;
+  color: #001f8d;
+  margin-bottom: 10px;
+}
+
+.landing-page .expert-verification .expert-member .underline {
+  width: 60px;
+  height: 2px;
+  background-color: #001f8d;
+  margin: 0 auto 10px auto;
+}
+
+.landing-page .expert-verification .expert-member span {
+  font-style: italic;
+  color: #333;
+  font-size: 15px;
+}
+
+.landing-page .expert-verification .social a {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin: 0 1px;
+  font-size: 15px;
+  background-color: #f5f5f5;
+  color: #001f8d;
+  transition: background 0.3s, color 0.3s;
+}
+
+.landing-page .expert-verification .social a:hover {
+  background-color: #001f8d;
+  color: white;
+}
+
 /*--------------------------------------------------------------
 # Call To Action Section
 --------------------------------------------------------------*/

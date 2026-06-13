@@ -245,22 +245,29 @@ const LandingPage = () => {
                     <div className="container">
                         <div className="row gy-4 justify-content-center">
 
-                            <div className="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                            <div className="col-lg-6 col-md-6" data-aos="fade-up" data-aos-delay="100">
                                 <div className="expert-member text-center">
                                     <h4>TS. Trần Việt Châu</h4>
                                     <div className="underline"></div>
-                                    <span><em>Chuyên gia xác thực</em></span>
+                                    <span><em>Chuyên gia AI - Phó Trưởng khoa Khoa học Máy tính <br></br>Trường CNTT & TT, Đại học Cần Thơ</em></span>
                                 </div>
                             </div>
 
-                            <div className="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                            <div className="col-lg-6 col-md-6" data-aos="fade-up" data-aos-delay="200">
                                 <div className="expert-member text-center">
                                     <h4>Lương Thị Huyền Trân</h4>
                                     <div className="underline"></div>
-                                    <span><em>Chuyên gia xác thực</em></span>
+                                    <span><em>Chuyên gia giáo vụ - Văn phòng Trường CNTT & TT, <br></br>Đại học Cần Thơ</em></span>
                                 </div>
                             </div>
 
+                            <div className="col-lg-6 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                                <div className="expert-member text-center">
+                                    <h4>Phan Minh Tiến</h4>
+                                    <div className="underline"></div>
+                                    <span><em>Chuyên gia tri thức - Nhân viên Phòng Đào tạo, <br></br>Đại học Cần Thơ</em></span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
