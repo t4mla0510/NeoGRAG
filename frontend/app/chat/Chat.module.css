@@ -260,6 +260,17 @@
   padding: 0;
 }
 
+.message-text :global(.katex-display) {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  padding: 4px 0;
+}
+
+.message-text :global(.katex) {
+  font-size: 1em;
+}
+
 .message-text ul,
 .message-text ol {
   margin: 8px 0;

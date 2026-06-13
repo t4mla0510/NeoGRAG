@@ -4,7 +4,9 @@ import { useChat } from '@ai-sdk/react';
 import { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
 import rehypeRaw from 'rehype-raw';
+import rehypeKatex from 'rehype-katex';
 import { assets } from '../components/assets';
 import Link from 'next/link';
 import styles from './Chat.module.css';
@@ -13,9 +15,32 @@ import { DefaultChatTransport } from 'ai';
 import type { Components } from 'react-markdown';
 
 const markdownComponents: Partial<Components> = {
-  a: ({ node, ...props }) => (
-    <a {...props} target="_blank" rel="noopener noreferrer" />
-  ),
+  a: ({ node, ...props }) => {
+    void node;
+    return <a {...props} target="_blank" rel="noopener noreferrer" />;
+  },
+};
+
+const normalizeMarkdownMath = (markdown: string) => {
+  let inCodeFence = false;
+
+  return markdown
+    .split('\n')
+    .map(line => {
+      if (/^\s*(```|~~~)/.test(line)) {
+        inCodeFence = !inCodeFence;
+        return line;
+      }
+
+      if (inCodeFence) return line;
+
+      const displayMath = line.match(/^(\s*)\$\$(.+?)\$\$\s*$/);
+      if (!displayMath) return line;
+
+      const [, indent, expression] = displayMath;
+      return `${indent}$$\n${expression.trim()}\n${indent}$$`;
+    })
+    .join('\n');
 };
 declare global {
   interface Window {
@@ -317,11 +342,11 @@ const Chat = () => {
                           return (
                             <ReactMarkdown
                               key={`${message.id}-${i}`}
-                              remarkPlugins={[remarkGfm]}
-                              rehypePlugins={[rehypeRaw]}
+                              remarkPlugins={[remarkGfm, remarkMath]}
+                              rehypePlugins={[rehypeRaw, rehypeKatex]}
                               components={markdownComponents}
                             >
-                              {part.text}
+                              {normalizeMarkdownMath(part.text)}
                             </ReactMarkdown>
                           );
                         })}
