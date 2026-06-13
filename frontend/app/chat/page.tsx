@@ -130,7 +130,7 @@ const Chat = () => {
       const welcomeMessage = {
         id: `welcome-${Date.now()}`,
         role: 'assistant' as const,
-        parts: [{ type: 'text' as const, text: 'Chào bạn! Tôi là **REBot — Trợ lý AI Tư vấn Học vụ** của Trường Đại học Cần Thơ. Tôi có thể giúp bạn tra cứu thông tin về quy chế đào tạo, đăng ký học phần, điểm số, GPA, CPA, điều kiện tốt nghiệp, cảnh báo học vụ, lịch học, học bổng, khóa luận, và chuẩn đầu ra. Bạn muốn hỏi điều gì về quy chế học vụ hôm nay?' }],
+        parts: [{ type: 'text' as const, text: 'Chào bạn! Tôi là **REBot — Trợ lý AI Tư vấn Học vụ** của Đại học Cần Thơ. Tôi có thể giúp bạn tra cứu thông tin về quy chế đào tạo, đăng ký học phần, điểm số, GPA, CPA, điều kiện tốt nghiệp, cảnh báo học vụ, lịch học, học bổng, khóa luận, và chuẩn đầu ra. Bạn muốn hỏi điều gì về quy chế học vụ hôm nay?' }],
         createdAt: new Date(),
       };
       setMessages([welcomeMessage]);

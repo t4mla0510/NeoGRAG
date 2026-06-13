@@ -265,7 +265,7 @@ const LandingPage = () => {
                                 <div className="expert-member text-center">
                                     <h4>Phan Minh Tiến</h4>
                                     <div className="underline"></div>
-                                    <span><em>Chuyên gia tri thức - Nhân viên Phòng Đào tạo, <br></br>Đại học Cần Thơ</em></span>
+                                    <span><em>Chuyên gia tri thức - Chuyên viên Phòng Đào tạo, <br></br>Đại học Cần Thơ</em></span>
                                 </div>
                             </div>
                         </div>
