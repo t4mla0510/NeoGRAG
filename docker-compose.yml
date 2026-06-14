@@ -83,6 +83,7 @@ services:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
     volumes:
       - ./system-prompt.txt:/app/system-prompt.txt:ro
+      - ./data:/app/data
     env_file:
       - .env
     environment:
