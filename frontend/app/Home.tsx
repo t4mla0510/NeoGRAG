@@ -263,7 +263,7 @@ const LandingPage = () => {
 
                             <div className="col-lg-6 col-md-6" data-aos="fade-up" data-aos-delay="400">
                                 <div className="expert-member text-center">
-                                    <h4>Phan Minh Tiến</h4>
+                                    <h4>Phạm Minh Tiến</h4>
                                     <div className="underline"></div>
                                     <span><em>Chuyên gia tri thức - Chuyên viên Phòng Đào tạo, <br></br>Đại học Cần Thơ</em></span>
                                 </div>
