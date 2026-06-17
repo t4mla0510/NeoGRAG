@@ -180,35 +180,7 @@ const LandingPage = () => {
                                 <div className="team-member text-center">
                                     <h4>La Trí Tâm</h4>
                                     <div className="underline"></div>
-                                    <span><em>Thành viên chính</em></span>
-                                    <div className="social mt-3">
-                                        <a href="#"><i className="bi bi-twitter"></i></a>
-                                        <a href="#"><i className="bi bi-facebook"></i></a>
-                                        <a href="#"><i className="bi bi-instagram"></i></a>
-                                        <a href="#"><i className="bi bi-linkedin"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                                <div className="team-member text-center">
-                                    <h4>Nguyễn Minh Nghi</h4>
-                                    <div className="underline"></div>
-                                    <span><em>Thành viên chính</em></span>
-                                    <div className="social mt-3">
-                                        <a href="#"><i className="bi bi-twitter"></i></a>
-                                        <a href="#"><i className="bi bi-facebook"></i></a>
-                                        <a href="#"><i className="bi bi-instagram"></i></a>
-                                        <a href="#"><i className="bi bi-linkedin"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
-                                <div className="team-member text-center">
-                                    <h4>Phạm Lưu Khánh Vân</h4>
-                                    <div className="underline"></div>
-                                    <span><em>Thành viên chính</em></span>
+                                    <span><em>Chủ nhiệm đề tài - Kỹ thuật phần mềm CLC K48</em></span>
                                     <div className="social mt-3">
                                         <a href="#"><i className="bi bi-twitter"></i></a>
                                         <a href="#"><i className="bi bi-facebook"></i></a>
@@ -222,7 +194,7 @@ const LandingPage = () => {
                                 <div className="team-member text-center">
                                     <h4>Lê Hữu Lâm Thư</h4>
                                     <div className="underline"></div>
-                                    <span><em>Thành viên chính</em></span>
+                                    <span><em>Thành viên chính - Công nghệ thông tin CLC K48</em></span>
                                     <div className="social mt-3">
                                         <a href="#"><i className="bi bi-twitter"></i></a>
                                         <a href="#"><i className="bi bi-facebook"></i></a>
@@ -232,6 +204,48 @@ const LandingPage = () => {
                                 </div>
                             </div>
 
+                            <div className="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                                <div className="team-member text-center">
+                                    <h4>Nguyễn Minh Nghi</h4>
+                                    <div className="underline"></div>
+                                    <span><em>Thành viên chính - Kỹ thuật phần mềm CLC K48</em></span>
+                                    <div className="social mt-3">
+                                        <a href="#"><i className="bi bi-twitter"></i></a>
+                                        <a href="#"><i className="bi bi-facebook"></i></a>
+                                        <a href="#"><i className="bi bi-instagram"></i></a>
+                                        <a href="#"><i className="bi bi-linkedin"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                                <div className="team-member text-center">
+                                    <h4>Phạm Lưu Khánh Vân</h4>
+                                    <div className="underline"></div>
+                                    <span><em>Thành viên chính - Kỹ thuật phần mềm CLC K48</em></span>
+                                    <div className="social mt-3">
+                                        <a href="#"><i className="bi bi-twitter"></i></a>
+                                        <a href="#"><i className="bi bi-facebook"></i></a>
+                                        <a href="#"><i className="bi bi-instagram"></i></a>
+                                        <a href="#"><i className="bi bi-linkedin"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+                                <div className="team-member text-center">
+                                    <h4>Thái Phú An</h4>
+                                    <div className="underline"></div>
+                                    <span><em>Thành viên chính - Khoa học máy tính K48</em></span>
+                                    <div className="social mt-3">
+                                        <a href="#"><i className="bi bi-twitter"></i></a>
+                                        <a href="#"><i className="bi bi-facebook"></i></a>
+                                        <a href="#"><i className="bi bi-instagram"></i></a>
+                                        <a href="#"><i className="bi bi-linkedin"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                            
                         </div>
                     </div>
                 </section>
