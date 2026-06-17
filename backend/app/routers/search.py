@@ -38,17 +38,21 @@ async def search_graph(request: GraphSearchRequest):
 
 @router.post("/search/hybrid")
 async def search_hybrid(request: HybridSearchRequest):
-    enhanced_query = ned_service.enhance_query(request.query)
+    enhancement = ned_service.enhance(request.query)
 
+    # Use the protected search query for retrieval; the LLM context is kept
+    # separate and can be prepended to the generation prompt by the caller.
     results = hybrid_search.search(
-        query=enhanced_query,
+        query=enhancement.search_query,
         collection_name="academic_regulation",
         top_k=request.top_k,
     )
 
     return {
         "query": request.query,
-        "enhanced_query": enhanced_query,
+        "search_query": enhancement.search_query,
+        "llm_context": enhancement.llm_context,
+        "enhanced_query": enhancement.combined,
         "results": [
             {
                 "id": r.id,

@@ -8,13 +8,19 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
-from underthesea import ner
+from underthesea import ner, word_tokenize
 
 from app.config import config
 
 logger = logging.getLogger(__name__)
 
 NOUN_TAGS = {"N", "Np", "Nb"}
+
+# Abbreviations with the same token-boundary shape as their source word are unsafe
+# to replace via a raw word-boundary regex.  For example "đa" is a substring of
+# the regular Vietnamese word "tối đa".  Such short forms must only be expanded
+# when they appear as a standalone token in the tokenized query.
+_TOKEN_SAFETY_MIN_LEN = 3
 
 
 @dataclass
@@ -23,8 +29,37 @@ class NEDMatch:
     description: str
 
 
+@dataclass
+class NEDEnhancement:
+    """Container for the two forms of a query used downstream.
+
+    - ``search_query`` should be passed to vector/keyword retrieval.  It keeps
+      the user's original wording and only expands abbreviations that are safe
+      token-wise, so retrieval is not poisoned by substitutions such as
+      "tối đa" -> "tối đề án".
+    - ``llm_context`` is optional disambiguation context (entity definitions)
+      that can be appended to the LLM prompt without touching the search query.
+    """
+
+    search_query: str
+    llm_context: str = ""
+
+    @property
+    def combined(self) -> str:
+        """Original behavior: search query + context separated by a newline."""
+        if not self.llm_context:
+            return self.search_query
+        return f"{self.search_query}\n{self.llm_context}"
+
+
 class NEDService:
-    """Enhance user query by expanding abbreviations and disambiguating entities."""
+    """Enhance user query by expanding abbreviations and disambiguating entities.
+
+    The service now returns a ``NEDEnhancement`` object that separates the
+    retrieval query from the LLM disambiguation context.  This prevents
+    abbreviation expansion from corrupting vector/BM25 retrieval while still
+    providing useful entity definitions to the generation model.
+    """
 
     @classmethod
     def get_instance(cls) -> "NEDService":
@@ -50,27 +85,68 @@ class NEDService:
         )
 
     def enhance_query(self, query: str) -> str:
-        """Return a query enhanced by NED."""
+        """Return a query enhanced by NED (backward-compatible string output)."""
+        return self.enhance(query).combined
+
+    def enhance(self, query: str) -> NEDEnhancement:
+        """Enhance a query and return separated search query + LLM context."""
         if not query or not query.strip():
-            return query
+            return NEDEnhancement(search_query=query)
 
         normalized_query = self._normalize_spaces(query)
         expanded_query = self._expand_abbreviations(normalized_query)
         matched = self._match_entities(expanded_query)
 
         if not matched:
-            return expanded_query
+            return NEDEnhancement(search_query=expanded_query)
 
         disambiguation_context = " ".join(
             f"{item.entity}: {item.description}" for item in matched[:3]
         )
-        return f"{expanded_query}\n{disambiguation_context}"
+        return NEDEnhancement(
+            search_query=expanded_query,
+            llm_context=disambiguation_context,
+        )
 
     def _expand_abbreviations(self, text: str) -> str:
+        """Expand abbreviations without breaking normal Vietnamese words.
+
+        Long abbreviations (>= _TOKEN_SAFETY_MIN_LEN characters) are replaced
+        via a word-boundary regex as before.  Short or token-shape-conflicting
+        abbreviations are only replaced when they appear as a standalone token
+        in the word-tokenized query.  This stops "đa" in "tối đa" from becoming
+        "đề án" while still expanding "đa" when it stands alone.
+        """
         expanded = text
-        for abbr, full in sorted(self._abbreviations.items(), key=lambda x: len(x[0]), reverse=True):
-            pattern = re.compile(rf"(?<!\w){re.escape(abbr)}(?!\w)", re.IGNORECASE)
-            expanded = pattern.sub(full, expanded)
+
+        # Sort by length descending so longer abbreviations win (e.g. "ctđt"
+        # before "ct").
+        sorted_abbrs = sorted(
+            self._abbreviations.items(),
+            key=lambda x: len(x[0]),
+            reverse=True,
+        )
+
+        tokens = [t.strip() for t in word_tokenize(text.lower()) if t.strip()]
+        for abbr, full in sorted_abbrs:
+            abbr_lower = abbr.lower()
+            if len(abbr) >= _TOKEN_SAFETY_MIN_LEN:
+                pattern = re.compile(rf"(?<!\w){re.escape(abbr)}(?!\w)", re.IGNORECASE)
+                expanded = pattern.sub(full, expanded)
+                continue
+
+            # For short abbreviations, require an exact token match.
+            if abbr_lower not in tokens:
+                continue
+
+            # Replace only whole-token occurrences.  We split on whitespace /
+            # punctuation, rebuild, and keep punctuation around the token.
+            token_pattern = re.compile(
+                rf"(?<![\w-]){re.escape(abbr)}(?![\w-])",
+                re.IGNORECASE,
+            )
+            expanded = token_pattern.sub(full, expanded)
+
         return self._normalize_spaces(expanded)
 
     def _match_entities(self, text: str) -> list[NEDMatch]:

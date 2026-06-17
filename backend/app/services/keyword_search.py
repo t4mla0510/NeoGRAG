@@ -71,7 +71,11 @@ class KeywordSearch:
         )
 
         search_results = []
-        for doc in docs:
+        for i, doc in enumerate(docs):
+            # BM25 scores are not exposed by LangChain's retriever.  Use the
+            # retrieval rank as a monotonic score: rank 1 -> 1.0, rank 2 -> 0.5,
+            # rank 3 -> 0.333, etc.  This preserves ordering for RRF fusion.
+            score = 1.0 / (i + 1)
             search_results.append(
                 SearchResult(
                     id=doc.metadata.get(
@@ -80,7 +84,7 @@ class KeywordSearch:
                     ),
                     document=doc.page_content,
                     metadata=doc.metadata,
-                    score=doc.metadata.get("score", 1.0),
+                    score=score,
                 )
             )
 

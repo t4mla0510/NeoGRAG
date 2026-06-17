@@ -158,16 +158,23 @@ Return ONLY a JSON array of indices (e.g., [2, 0, 1, 3]), ordered from most rele
         normalized_semantic = min_max_normalize(semantic_scores)
         normalized_keyword = min_max_normalize(keyword_scores)
 
+        # Build per-source ranks for proper RRF.  Using the normalized scores
+        # as the ranking key produced an inverted order and mass ties (BM25
+        # scores are all 1.0 after min-max normalization), so we use the
+        # original result order instead.
+        semantic_rank = {r.id: i + 1 for i, r in enumerate(semantic_results)}
+        keyword_rank = {r.id: i + 1 for i, r in enumerate(keyword_results)}
+
         rrf_input: dict[str, list[tuple[str, float]]] = {}
         for doc_id in all_doc_ids:
             sources = []
-            if doc_id in normalized_semantic:
+            if doc_id in semantic_rank:
                 sources.append(("semantic", normalized_semantic[doc_id]))
-            if doc_id in normalized_keyword:
+            if doc_id in keyword_rank:
                 sources.append(("keyword", normalized_keyword[doc_id]))
             rrf_input[doc_id] = sources
 
-        rrf_scores = reciprocal_rank_fusion(rrf_input)
+        rrf_scores = reciprocal_rank_fusion(rrf_input, semantic_rank, keyword_rank)
 
         doc_lookup: dict[str, tuple[str, dict]] = {}
         for r in semantic_results:
@@ -227,14 +234,47 @@ def min_max_normalize(scores: dict[str, float]) -> dict[str, float]:
 
 def reciprocal_rank_fusion(
     results_by_doc: dict[str, list[tuple[str, float]]],
+    semantic_rank: Optional[dict[str, int]] = None,
+    keyword_rank: Optional[dict[str, int]] = None,
     k: int = RRF_K,
 ) -> dict[str, float]:
-    """Combine multiple result lists using Reciprocal Rank Fusion."""
+    """Combine multiple result lists using Reciprocal Rank Fusion.
+
+    ``results_by_doc`` carries the source names for each document.  The actual
+    ranks used in the RRF formula come from the original search result order
+    (``semantic_rank`` / ``keyword_rank``) because the normalized scores are
+    unreliable for ranking: BM25 scores are often all identical after min-max
+    normalization, and using them as the sort key produced the wrong order.
+
+    Ties are broken by a tiny bonus based on the sum of reciprocal source
+    ranks, favoring documents that rank well in *both* semantic and keyword
+    search.  The tie-breaker is added to the final score so the returned
+    ordering reflects the tie-break while keeping the base RRF values stable.
+    """
+    rank_maps = {"semantic": semantic_rank or {}, "keyword": keyword_rank or {}}
+
     rrf_scores: dict[str, float] = {}
+    tie_breakers: dict[str, float] = {}
 
     for doc_id, source_scores in results_by_doc.items():
-        rrf_scores[doc_id] = sum(
-            1 / (k + rank) for rank, (_, _) in enumerate(source_scores)
-        )
+        rrf_scores[doc_id] = 0.0
+        reciprocal_rank_sum = 0.0
 
-    return rrf_scores
+        for source, _normalized_score in source_scores:
+            rank = rank_maps.get(source, {}).get(doc_id)
+            if rank is None:
+                continue
+            rrf_scores[doc_id] += 1 / (k + rank)
+            reciprocal_rank_sum += 1 / rank
+
+        if reciprocal_rank_sum > 0:
+            # Scale down so it functions only as a tie-breaker.
+            tie_breakers[doc_id] = reciprocal_rank_sum * 1e-6
+
+    sorted_docs = sorted(
+        rrf_scores.items(),
+        key=lambda item: (item[1] + tie_breakers[item[0]], item[1]),
+        reverse=True,
+    )
+    return {doc_id: score + tie_breakers[doc_id] for doc_id, score in sorted_docs}
+

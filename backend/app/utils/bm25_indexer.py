@@ -166,7 +166,10 @@ class BM25Indexer:
 
         self._indexes[collection_name].k = k
         docs = self._indexes[collection_name].invoke(query)
-        for doc in docs:
+        for i, doc in enumerate(docs):
+            # LangChain BM25Retriever does not expose scores; use the 1-based rank
+            # so downstream fusion can distinguish documents.
+            doc.metadata["score"] = 1.0 / (i + 1)
             doc.metadata["score_type"] = "bm25"
         return docs
 
