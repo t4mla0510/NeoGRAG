@@ -1,0 +1,93 @@
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: neograg-cloudflared
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    env_file:
+      - .env
+    depends_on:
+      - nginx
+    networks:
+      - neograg_network
+  nginx:
+    image: nginx:alpine
+    container_name: neograg-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./maintenance:/usr/share/nginx/html:ro
+    networks:
+      - neograg_network
+
+  postgres:
+    image: postgres:17
+    container_name: neograg-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin}
+      POSTGRES_DB: ${POSTGRES_DB:-neograg}
+    expose:
+      - "5431"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - neograg_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: neograg-redis
+    command: redis-server --appendonly yes
+    expose:
+      - "6379"
+    volumes:
+      - ./redis_cache:/data:rw
+    networks:
+      - neograg_network
+
+  backend:
+    image: tamb2203579/neograg-backend:latest
+    container_name: neograg-backend
+    env_file:
+      - .env
+    environment:
+      HF_HOME: /hf_cache
+      HF_HUB_CACHE: /hf_cache/hub
+      TRANSFORMERS_CACHE: /hf_cache/transformers
+      TORCH_HOME: /hf_cache/torch
+      RAPIDOCR_HOME: /hf_cache/rapidocr
+      OLLAMA_MODEL: ${BACKEND_OLLAMA_MODEL}
+    expose:
+      - "8000"
+    volumes:
+      - hf_cache:/hf_cache
+      - ./cache:/app/cache
+      - ./chroma_data:/app/chroma_data
+      - ./data:/app/data
+    depends_on:
+      - redis
+    networks:
+      - neograg_network
+
+  frontend:
+    image: tamb2203579/neograg-frontend:latest
+    container_name: neograg-frontend
+    volumes:
+      - ./system-prompt.txt:/app/system-prompt.txt:ro
+      - ./data:/app/data
+    env_file:
+      - .env
+    environment:
+      OLLAMA_MODEL: ${FRONTEND_OLLAMA_MODEL}
+    expose:
+      - "3000"
+    networks:
+      - neograg_network
+
+networks:
+  neograg_network:
+    driver: bridge
+
+volumes:
+  hf_cache:
+  postgres_data:

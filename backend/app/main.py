@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import config
 from app.utils.bm25_indexer import BM25Indexer
-from app.routers import files, knowledge_graph, process
+from app.routers import files, knowledge_graph, process, system
 from app.routers import auth_router, contact_router, feedback_router, search_router
 
 logging.basicConfig(level=logging.INFO)
@@ -44,6 +44,7 @@ app.add_middleware(
 
 app.include_router(files.router, prefix="/api", tags=["files"])
 app.include_router(process.router, prefix="/api", tags=["process"])
+app.include_router(system.router, prefix="/api", tags=["system"])
 app.include_router(knowledge_graph.router, prefix="/api", tags=["knowledge-graph"])
 app.include_router(auth_router, prefix="/api", tags=["auth"])
 app.include_router(feedback_router, prefix="/api", tags=["feedback"])

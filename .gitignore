@@ -71,3 +71,5 @@ Thumbs.db
 # Documentation files
 *.txt
 *.md
+
+feedbacks/

@@ -36,6 +36,9 @@ class BM25Indexer:
             cls._instance = cls()
         return cls._instance
 
+    def document_count(self, collection_name: str) -> int:
+        return len(self._documents.get(collection_name, []))
+
     def _create_retriever(
         self,
         texts: list[str],

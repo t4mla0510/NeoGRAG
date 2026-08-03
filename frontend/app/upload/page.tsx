@@ -1,12 +1,14 @@
 'use client';
 
-import UploadPage from './Upload';
-import PrivateRoute from './PrivateRouter';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Upload() {
-  return (
-    <PrivateRoute>
-      <UploadPage />
-    </PrivateRoute>
-  );
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace('/admin/files');
+  }, [router]);
+
+  return null;
 }
