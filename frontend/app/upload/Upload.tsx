@@ -213,7 +213,7 @@ function FilesTab(props: {
   const selectedFiles = props.files.filter(file => props.selectedIds.includes(file.id));
 
   const openKnowledgeGraph = () => {
-    window.open(`${graphUrl}?v=${Date.now()}`, '_blank', 'noopener,noreferrer');
+    window.open(graphUrl, '_blank', 'noopener,noreferrer');
   };
 
   const handleDrop = (event: DragEvent<HTMLLabelElement>) => {

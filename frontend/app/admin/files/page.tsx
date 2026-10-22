@@ -136,7 +136,7 @@ export default function AdminFiles() {
   };
 
   const openKnowledgeGraph = () => {
-    window.open(`${graphUrl}?v=${Date.now()}`, '_blank', 'noopener,noreferrer');
+    window.open(graphUrl, '_blank', 'noopener,noreferrer');
   };
 
   const allSelected = files.length > 0 && selectedIds.length === files.length;

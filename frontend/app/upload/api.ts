@@ -40,7 +40,7 @@ async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
   return payload as T;
 }
 
-export const graphUrl = `${API_BASE}/api/knowledge-graph/academic-regulation`;
+export const graphUrl = '/admin/kg';
 
 export async function listFiles(): Promise<FileItem[]> {
   const payload = await requestJson<{ files: FileItem[] }>('/api/files');

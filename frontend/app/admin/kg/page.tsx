@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
+import KnowledgeGraph from '../../components/admin/KnowledgeGraph';
 import { formatDateTime, graphStatus, kgUrl, type KGStatus } from '../api';
 
 export default function AdminKG() {
@@ -13,7 +14,8 @@ export default function AdminKG() {
       .catch(() => setKg({ available: false }));
   }, []);
 
-  const frameUrl = `${kgUrl}?v=${Date.now()}`;
+  const graphKey = kg?.updatedAt ?? 0;
+  const graphUrl = `${kgUrl}?v=${graphKey}`;
 
   return (
     <AdminLayout
@@ -42,11 +44,7 @@ export default function AdminKG() {
       </div>
 
       {kg?.available ? (
-        <iframe
-          className="admin-frame"
-          title="Knowledge Graph — academic_regulation"
-          src={frameUrl}
-        />
+        <KnowledgeGraph key={graphKey} url={graphUrl} />
       ) : (
         <div className="admin-card">
           <h2 className="admin-card-title">Chưa có đồ thị tri thức</h2>

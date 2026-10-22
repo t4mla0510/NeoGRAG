@@ -5,7 +5,7 @@ from app.config import config
 
 router = APIRouter(prefix="/knowledge-graph")
 
-GRAPH_FILE_NAME = "academic_regulation.graph.html"
+GRAPH_FILE_NAME = "academic_regulation.graph.json"
 NO_CACHE_HEADERS = {
     "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
     "Pragma": "no-cache",
@@ -25,16 +25,16 @@ def graph_file_path():
 def academic_regulation_graph():
     path = graph_file_path()
     if not path.exists() or not path.is_file():
-        raise HTTPException(status_code=404, detail="Knowledge graph HTML is not available")
-    return FileResponse(path, media_type="text/html", headers=NO_CACHE_HEADERS)
+        raise HTTPException(status_code=404, detail="Knowledge graph data is not available")
+    return FileResponse(path, media_type="application/json", headers=NO_CACHE_HEADERS)
 
 
 @router.head("/academic-regulation")
 def academic_regulation_graph_head():
     path = graph_file_path()
     if not path.exists() or not path.is_file():
-        raise HTTPException(status_code=404, detail="Knowledge graph HTML is not available")
-    return Response(status_code=200, media_type="text/html", headers=NO_CACHE_HEADERS)
+        raise HTTPException(status_code=404, detail="Knowledge graph data is not available")
+    return Response(status_code=200, media_type="application/json", headers=NO_CACHE_HEADERS)
 
 
 @router.get("/status")
